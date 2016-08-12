@@ -85,18 +85,18 @@
 
 
 <meta name="description" content="前言:自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了Instant Run这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 https://developer.android.com/studio/run/index.html#instant-run
-Instant Run主要分为三种方式来加载app:Hot Swap：这是最令人激动的方式，它可">
+&amp;lt;font size=”3” color=”#000000””&amp;gt;Instant Ru">
 <meta property="og:type" content="article">
 <meta property="og:title" content="浅谈Instan Run中的热替换">
 <meta property="og:url" content="https://halfstackdeveloper.github.io/2016/08/10/浅谈Instan-Run中的热替换/index.html">
 <meta property="og:site_name" content="HalfStackDeveloper">
 <meta property="og:description" content="前言:自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了Instant Run这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 https://developer.android.com/studio/run/index.html#instant-run
-Instant Run主要分为三种方式来加载app:Hot Swap：这是最令人激动的方式，它可">
-<meta property="og:updated_time" content="2016-08-12T01:20:04.000Z">
+&amp;lt;font size=”3” color=”#000000””&amp;gt;Instant Ru">
+<meta property="og:updated_time" content="2016-08-12T02:12:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈Instan Run中的热替换">
 <meta name="twitter:description" content="前言:自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了Instant Run这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 https://developer.android.com/studio/run/index.html#instant-run
-Instant Run主要分为三种方式来加载app:Hot Swap：这是最令人激动的方式，它可">
+&amp;lt;font size=”3” color=”#000000””&amp;gt;Instant Ru">
 
 
 
@@ -297,9 +297,11 @@ Instant Run主要分为三种方式来加载app:Hot Swap：这是最令人激动
 
       
         <h3 id="前言"><a href="#前言" class="headerlink" title="前言:"></a>前言:</h3><p>自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了<strong>Instant Run</strong>这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 <a href="https://developer.android.com/studio/run/index.html#instant-run" target="_blank" rel="external">https://developer.android.com/studio/run/index.html#instant-run</a></p>
-<h3 id="Instant-Run主要分为三种方式来加载app"><a href="#Instant-Run主要分为三种方式来加载app" class="headerlink" title="Instant Run主要分为三种方式来加载app:"></a>Instant Run主要分为三种方式来加载app:</h3><h5 id="Hot-Swap："><a href="#Hot-Swap：" class="headerlink" title="Hot Swap："></a>Hot Swap：</h5><p>这是最令人激动的方式，它可以在不重启Activity的情况下实现代码的替换，简直是逆天啊！但是热替换的条件很苛刻，只能是在简单的修改了代码的情况下，AS才会采用这种方式。</p>
-<h5 id="Warm-Swap："><a href="#Warm-Swap：" class="headerlink" title="Warm Swap："></a>Warm Swap：</h5><p>暖替换，是对热替换的让步，它会重启你所修改的Activity，但是不会重启App。如果在项目中修改了资源，AS会自动选择这种方式。</p>
-<h5 id="Cold-Swap"><a href="#Cold-Swap" class="headerlink" title="Cold Swap:"></a>Cold Swap:</h5><p>如果你改变了代码的结构，如继承和改变了方法名，那么AS也只能无奈的选择冷替换了，它会重启整个App。</p>
+&lt;font size=”3” color=”#000000””&gt;<strong>Instant Run主要分为三种方式来加载app:</strong>
+
+<p><font size="2" color="#4d4d4d"><strong>Hot Swap：</strong></font><br>这是最令人激动的方式，它可以在不重启Activity的情况下实现代码的替换，简直是逆天啊！但是热替换的条件很苛刻，只能是在简单的修改了代码的情况下，AS才会采用这种方式。</p>
+<p><font size="2" color="#4d4d4d"><strong>Warm Swap：</strong></font><br>暖替换，是对热替换的让步，它会重启你所修改的Activity，但是不会重启App。如果在项目中修改了资源，AS会自动选择这种方式。</p>
+<p><font size="2" color="#4d4d4d"><strong>Cold Swap:</strong></font><br>如果你改变了代码的结构，如继承和改变了方法名，那么AS也只能无奈的选择冷替换了，它会重启整个App。</p>
 <h3 id="探索"><a href="#探索" class="headerlink" title="探索:"></a>探索:</h3><p>接下来让我们来探索一下神奇的Hot Swap。</p>
 <p>这是一个很简单的Activity，就用它来窥探Instant Run吧。</p>
 <pre><code>public class MainActivity extends AppCompatActivity {
@@ -554,7 +556,7 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Instant-Run主要分为三种方式来加载app"><span class="nav-number">2.</span> <span class="nav-text">Instant Run主要分为三种方式来加载app:</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Hot-Swap："><span class="nav-number">2.0.1.</span> <span class="nav-text">Hot Swap：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Warm-Swap："><span class="nav-number">2.0.2.</span> <span class="nav-text">Warm Swap：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Cold-Swap"><span class="nav-number">2.0.3.</span> <span class="nav-text">Cold Swap:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#探索"><span class="nav-number">3.</span> <span class="nav-text">探索:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">4.</span> <span class="nav-text">原理:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结:</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#探索"><span class="nav-number">2.</span> <span class="nav-text">探索:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">3.</span> <span class="nav-text">原理:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结:</span></a></li></ol></div>
             
           </div>
         </section>
