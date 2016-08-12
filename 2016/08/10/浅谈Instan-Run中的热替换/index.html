@@ -84,12 +84,19 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="HalfStackDeveloper">
-<meta property="og:url" content="https://halfstackdeveloper.github.io/index.html">
+<meta name="description" content="前言:自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了Instant Run这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 https://developer.android.com/studio/run/index.html#instant-run
+Instant Run主要分为三种方式来加载app:Hot Swap：这是最令人激动的方式，它可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈Instan Run中的热替换">
+<meta property="og:url" content="https://halfstackdeveloper.github.io/2016/08/10/浅谈Instan-Run中的热替换/index.html">
 <meta property="og:site_name" content="HalfStackDeveloper">
+<meta property="og:description" content="前言:自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了Instant Run这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 https://developer.android.com/studio/run/index.html#instant-run
+Instant Run主要分为三种方式来加载app:Hot Swap：这是最令人激动的方式，它可">
+<meta property="og:updated_time" content="2016-08-12T01:20:04.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HalfStackDeveloper">
+<meta name="twitter:title" content="浅谈Instan Run中的热替换">
+<meta name="twitter:description" content="前言:自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了Instant Run这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 https://developer.android.com/studio/run/index.html#instant-run
+Instant Run主要分为三种方式来加载app:Hot Swap：这是最令人激动的方式，它可">
 
 
 
@@ -110,9 +117,9 @@
 
 
 
-  <link rel="canonical" href="https://halfstackdeveloper.github.io/"/>
+  <link rel="canonical" href="https://halfstackdeveloper.github.io/2016/08/10/浅谈Instan-Run中的热替换/"/>
 
-  <title> HalfStackDeveloper </title>
+  <title> 浅谈Instan Run中的热替换 | HalfStackDeveloper </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -133,9 +140,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -212,9 +217,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
   
@@ -234,10 +239,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2016/08/10/浅谈Instan-Run中的热替换/" itemprop="url">
-                  浅谈Instan Run中的热替换
-                </a>
+                浅谈Instan Run中的热替换
               
             
           </h1>
@@ -284,9 +286,7 @@
       
 
       
-        
-          
-            <h3 id="前言"><a href="#前言" class="headerlink" title="前言:"></a>前言:</h3><p>自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了<strong>Instant Run</strong>这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 <a href="https://developer.android.com/studio/run/index.html#instant-run" target="_blank" rel="external">https://developer.android.com/studio/run/index.html#instant-run</a></p>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言:"></a>前言:</h3><p>自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了<strong>Instant Run</strong>这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 <a href="https://developer.android.com/studio/run/index.html#instant-run" target="_blank" rel="external">https://developer.android.com/studio/run/index.html#instant-run</a></p>
 <h3 id="Instant-Run主要分为三种方式来加载app"><a href="#Instant-Run主要分为三种方式来加载app" class="headerlink" title="Instant Run主要分为三种方式来加载app:"></a>Instant Run主要分为三种方式来加载app:</h3><h5 id="Hot-Swap："><a href="#Hot-Swap：" class="headerlink" title="Hot Swap："></a>Hot Swap：</h5><p>这是最令人激动的方式，它可以在不重启Activity的情况下实现代码的替换，简直是逆天啊！但是热替换的条件很苛刻，只能是在简单的修改了代码的情况下，AS才会采用这种方式。</p>
 <h5 id="Warm-Swap："><a href="#Warm-Swap：" class="headerlink" title="Warm Swap："></a>Warm Swap：</h5><p>暖替换，是对热替换的让步，它会重启你所修改的Activity，但是不会重启App。如果在项目中修改了资源，AS会自动选择这种方式。</p>
 <h5 id="Cold-Swap"><a href="#Cold-Swap" class="headerlink" title="Cold Swap:"></a>Cold Swap:</h5><p>如果你改变了代码的结构，如继承和改变了方法名，那么AS也只能无奈的选择冷替换了，它会重启整个App。</p>
@@ -418,16 +418,20 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
 <p>想深入了解补丁加载的同学，可以看一看w4lle’s Notes的文章<a href="http://w4lle.github.io/2016/05/02/从Instant%20run谈Android替换Application和动态加载机制/" target="_blank" rel="external">《从Instant run谈Android替换Application和动态加载机制》</a>。</p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结:"></a>总结:</h3><p>至此为止，Instan Run中的Hot Swap基本流程已经讲完了，总的来说就是代理，有点类似支付宝的Andfix，不过Andfix是从jni层去修改方法指针，本质其实都是替换掉目标方法，运行补丁方法。</p>
 
-          
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
@@ -438,16 +442,15 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
 
       
       
-        <div class="post-eof"></div>
-      
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -455,6 +458,14 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/10/浅谈Instan-Run中的热替换/"
+           data-title="浅谈Instan Run中的热替换" data-url="https://halfstackdeveloper.github.io/2016/08/10/浅谈Instan-Run中的热替换/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -474,8 +485,17 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -511,6 +531,17 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Instant-Run主要分为三种方式来加载app"><span class="nav-number">2.</span> <span class="nav-text">Instant Run主要分为三种方式来加载app:</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Hot-Swap："><span class="nav-number">2.0.1.</span> <span class="nav-text">Hot Swap：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Warm-Swap："><span class="nav-number">2.0.2.</span> <span class="nav-text">Warm Swap：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Cold-Swap"><span class="nav-number">2.0.3.</span> <span class="nav-text">Cold Swap:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#探索"><span class="nav-number">3.</span> <span class="nav-text">探索:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">4.</span> <span class="nav-text">原理:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结:</span></a></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -607,6 +638,10 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 
