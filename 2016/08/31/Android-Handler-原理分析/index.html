@@ -84,21 +84,18 @@
 
 
 
-<meta name="description" content="##前言
-（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） 
+<meta name="description" content="前言（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） 
 平时开发app时，Handler简直已经被用烂了，它的主要工作就是负责子线程何主线程之间的通信。我相信你已经对Handler的使用熟能生巧了，但是你真的了解它吗？">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android Handler 原理分析">
 <meta property="og:url" content="https://halfstackdeveloper.github.io/2016/08/31/Android-Handler-原理分析/index.html">
 <meta property="og:site_name" content="HalfStackDeveloper">
-<meta property="og:description" content="##前言
-（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） 
+<meta property="og:description" content="前言（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） 
 平时开发app时，Handler简直已经被用烂了，它的主要工作就是负责子线程何主线程之间的通信。我相信你已经对Handler的使用熟能生巧了，但是你真的了解它吗？">
-<meta property="og:updated_time" content="2016-08-31T02:15:28.000Z">
+<meta property="og:updated_time" content="2016-08-31T02:17:35.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android Handler 原理分析">
-<meta name="twitter:description" content="##前言
-（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） 
+<meta name="twitter:description" content="前言（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） 
 平时开发app时，Handler简直已经被用烂了，它的主要工作就是负责子线程何主线程之间的通信。我相信你已经对Handler的使用熟能生巧了，但是你真的了解它吗？">
 
 
@@ -299,13 +296,10 @@
       
 
       
-        <p>##前言</p>
-<p>（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） </p>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） </p>
 <p>平时开发app时，Handler简直已经被用烂了，它的主要工作就是负责子线程何主线程之间的通信。我相信你已经对Handler的使用熟能生巧了，但是你真的了解它吗？</p>
 <a id="more"></a>
-<p>##深入源码</p>
-<p>###Handler的使用</p>
-<p>先来回想一下我们平时都是怎么使用Handler的。</p>
+<h2 id="深入源码"><a href="#深入源码" class="headerlink" title="深入源码"></a>深入源码</h2><h3 id="Handler的使用"><a href="#Handler的使用" class="headerlink" title="Handler的使用"></a>Handler的使用</h3><p>先来回想一下我们平时都是怎么使用Handler的。</p>
 <p>step1:初始化一个Handler对象，重写其handleMessage()方法：</p>
 <pre><code>Handler mHandler=new Handler() {
 
@@ -325,8 +319,7 @@ msg.what=0;
 
 mHandler.sendMessage(msg);
 </code></pre><p>我们经常会在主线程中进行step1操作，而在子线程中通过setp2来与主现场通信，如执行UI操作。那么Handler究竟是如何做到线程之间通信的呢？故事要从一个叫Looper的家伙说起。</p>
-<p>###Looper是什么</p>
-<p>在Android中，对于每一个线程,都可以创建一个Looper对象（最多一个！）和多个Handler。Looper就像一个消息泵，源源不断的从消息池中拿到消息，交给Handler处理。</p>
+<h3 id="Looper是什么"><a href="#Looper是什么" class="headerlink" title="Looper是什么"></a>Looper是什么</h3><p>在Android中，对于每一个线程,都可以创建一个Looper对象（最多一个！）和多个Handler。Looper就像一个消息泵，源源不断的从消息池中拿到消息，交给Handler处理。</p>
 <p>我们先来简单的看一下Looper类，Looper类中有有四个我们必须要了解的变量：</p>
 <pre><code>private static final ThreadLocal&lt;Looper&gt; sThreadLocal = new ThreadLocal&lt;Looper&gt;();
 
@@ -395,8 +388,7 @@ mThread = Thread.currentThread();
 <pre><code>Message msg = queue.next();
 
 msg.target.dispatchMessage(msg);
-</code></pre><p>###Handler与Looper的绑定</p>
-<p>说了这么多，大家对Looper应该稍微有点了解了，但是上述的代码里似乎没有涉及到我们使用的Handler啊，那Looper是如何与Handler进行绑定的呢？又是怎么拿到我们的消息并进行分发的呢？这就要看看Handler的源码了。</p>
+</code></pre><h3 id="Handler与Looper的绑定"><a href="#Handler与Looper的绑定" class="headerlink" title="Handler与Looper的绑定"></a>Handler与Looper的绑定</h3><p>说了这么多，大家对Looper应该稍微有点了解了，但是上述的代码里似乎没有涉及到我们使用的Handler啊，那Looper是如何与Handler进行绑定的呢？又是怎么拿到我们的消息并进行分发的呢？这就要看看Handler的源码了。</p>
 <p>先要看一看Handler的构造函数：</p>
 <pre><code>public Handler(Callback callback, boolean async) {
 
@@ -491,8 +483,7 @@ msg.target.dispatchMessage(msg);
 
 };
 </code></pre><p>我们重写了handleMessage方法，处理我们接收到的消息，OK，消息终于送达到目的地了！</p>
-<p>###主线程的Looper</p>
-<p>最后在说一点，我们平时开发过程中，并没有在Activity中去初始化Looper，那为什么可以使用Handler呢？其实Activity所在的主线程照样也创建了Looper对象，替你干了活而已，虽然它是主线程，也得照样按照规则办事啊。</p>
+<h3 id="主线程的Looper"><a href="#主线程的Looper" class="headerlink" title="主线程的Looper"></a>主线程的Looper</h3><p>最后在说一点，我们平时开发过程中，并没有在Activity中去初始化Looper，那为什么可以使用Handler呢？其实Activity所在的主线程照样也创建了Looper对象，替你干了活而已，虽然它是主线程，也得照样按照规则办事啊。</p>
 <p>Activity所在的主线程是ActivityThread，其实这样说并不准确，因为ActivityThread并不是一个线程，它只是主线程的一个入口：ActivityThread中的void main(String[] args)。</p>
 <pre><code>public static void main(String[] args) {
 
@@ -541,8 +532,7 @@ msg.target.dispatchMessage(msg);
         }
 
     })
-</code></pre><p>##总结</p>
-<p>以上就是Handler与Looper的哀怨情仇。总得来说，Looper就像是一个邮局，Handler通过sendMessage()将信件交给Looper，放到邮局的仓库mQueue里，邮局Looper再不断的从仓库中取出信，交还给信对应的Handler，收信人调用handleMessage()来读信。</p>
+</code></pre><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以上就是Handler与Looper的哀怨情仇。总得来说，Looper就像是一个邮局，Handler通过sendMessage()将信件交给Looper，放到邮局的仓库mQueue里，邮局Looper再不断的从仓库中取出信，交还给信对应的Handler，收信人调用handleMessage()来读信。</p>
 
       
     </div>
@@ -684,7 +674,7 @@ msg.target.dispatchMessage(msg);
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#深入源码"><span class="nav-number">2.</span> <span class="nav-text">深入源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Handler的使用"><span class="nav-number">2.1.</span> <span class="nav-text">Handler的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Looper是什么"><span class="nav-number">2.2.</span> <span class="nav-text">Looper是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handler与Looper的绑定"><span class="nav-number">2.3.</span> <span class="nav-text">Handler与Looper的绑定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主线程的Looper"><span class="nav-number">2.4.</span> <span class="nav-text">主线程的Looper</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
           </div>
         </section>
