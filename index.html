@@ -5,10 +5,10 @@
   
 
 
-<html class="theme-next mist use-motion">
+<html class="theme-next muse use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 
 
@@ -63,9 +63,9 @@
 
 
 
-<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
 
-<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
   <meta name="keywords" content="Hexo, NexT" />
@@ -77,7 +77,7 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
 
 
 
@@ -93,24 +93,35 @@
 
 
 
-<script type="text/javascript" id="hexo.configuration">
+<script type="text/javascript" id="hexo.configurations">
   var NexT = window.NexT || {};
   var CONFIG = {
-    scheme: 'Mist',
+    root: '/',
+    scheme: 'Muse',
     sidebar: {"position":"left","display":"post"},
     fancybox: true,
     motion: true,
     duoshuo: {
-      userId: 0,
+      userId: '0',
       author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
     }
   };
 </script>
 
 
 
-
   <link rel="canonical" href="https://halfstackdeveloper.github.io/"/>
+
+
+
+
 
   <title> HalfStackDeveloper </title>
 </head>
@@ -187,22 +198,22 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
             归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
           </a>
         </li>
       
@@ -213,6 +224,8 @@
 
   
 </nav>
+
+
 
  </div>
     </header>
@@ -227,13 +240,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://halfstackdeveloper.github.io/2016/11/11/如何利用RecyclerView打造炫酷滑动卡片/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="XiandengWang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="HalfStackDeveloper">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="HalfStackDeveloper" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -259,39 +285,36 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-11-11T10:29:46+08:00" content="2016-11-11">
+            <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-11-11T10:29:46+08:00">
               2016-11-11
             </time>
+
+            &nbsp;|&nbsp;
+
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-check-o"></i>
+            </span>
+            <time title="Post modified" itemprop="dateModified" datetime="2016-11-11T10:30:57+08:00">
+              2016-11-11
+            </time>
+            
           </span>
 
           
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/11/11/如何利用RecyclerView打造炫酷滑动卡片/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/11/如何利用RecyclerView打造炫酷滑动卡片/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
 
           
           
-             <span id="/2016/11/11/如何利用RecyclerView打造炫酷滑动卡片/" class="leancloud_visitors" data-flag-title="如何利用RecyclerView打造炫酷滑动卡片">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
 
           
+          
+          
+
         </div>
       </header>
     
@@ -305,11 +328,13 @@
       
         
           <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前段时间一直在B站追《黑镜》第三季，相比前几季，这季很良心的拍了六集，😄着实过了一把瘾。由于看的是字幕组贡献的版本，每集开头都插了一个app的广告，叫“人人美剧”，一向喜欢看美剧的我便扫了一下二维码，安装了试一试。我打开app，匆匆滑动了一下首页的美剧列表，然后便随手切换到了订阅页面，然后，我就被订阅页面的动画效果吸引住了。</p>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/11/11/如何利用RecyclerView打造炫酷滑动卡片/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -321,6 +346,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -339,13 +365,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://halfstackdeveloper.github.io/2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="XiandengWang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="HalfStackDeveloper">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="HalfStackDeveloper" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -371,39 +410,36 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-10-19T11:45:50+08:00" content="2016-10-19">
+            <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-10-19T11:45:50+08:00">
               2016-10-19
             </time>
+
+            &nbsp;|&nbsp;
+
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-check-o"></i>
+            </span>
+            <time title="Post modified" itemprop="dateModified" datetime="2016-10-19T12:46:27+08:00">
+              2016-10-19
+            </time>
+            
           </span>
 
           
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
 
           
           
-             <span id="/2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/" class="leancloud_visitors" data-flag-title="tinker源码研读（一）：补丁生成之DexDiff原理简析">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
 
           
+          
+          
+
         </div>
       </header>
     
@@ -417,11 +453,13 @@
       
         
           <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>微信的热修复框架Tinker已经在国庆节之前开源了，成为了github.com/Tecent下第一个项目，刷爆了各位开发者的朋友圈。作为一个超级APP的HotFix库，Tinker不仅值得我们<strong>compile</strong>，更值得我们<strong>read</strong>。</p>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -433,6 +471,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -451,13 +490,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://halfstackdeveloper.github.io/2016/09/23/基于Instant-Run思想的HotFix方案实现/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="XiandengWang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="HalfStackDeveloper">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="HalfStackDeveloper" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -483,39 +535,36 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-09-23T22:49:48+08:00" content="2016-09-23">
+            <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-09-23T22:49:48+08:00">
               2016-09-23
             </time>
+
+            &nbsp;|&nbsp;
+
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-check-o"></i>
+            </span>
+            <time title="Post modified" itemprop="dateModified" datetime="2016-09-28T10:21:33+08:00">
+              2016-09-28
+            </time>
+            
           </span>
 
           
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/09/23/基于Instant-Run思想的HotFix方案实现/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/23/基于Instant-Run思想的HotFix方案实现/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
 
           
           
-             <span id="/2016/09/23/基于Instant-Run思想的HotFix方案实现/" class="leancloud_visitors" data-flag-title="基于Instant Run思想的HotFix方案实现">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
 
           
+          
+          
+
         </div>
       </header>
     
@@ -529,11 +578,13 @@
       
         
           <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>近一年来，各种HotFix库层出不穷，各家大厂百花齐放，QQ空间最早提出了自己的热修复实现，接着阿里也开源了自家的AndFix（貌似阿里百川已经给开发者提供了新的Hotfix功能），现在微信又有了Tinker，各家都如此关心HotFix，无非是线上版本的bug对产品影响太大，尤其是DAU比较高的app，更是不能容忍。前几天看到美团基于Instant run原理推出了自己的Hotfix库，不过貌似没有开源，于是自己就按照Instant run的原理也鼓捣出了一个简单的HotFix实现，<strong>可以在不重启App和Activity的条件下实现修复，</strong>代码地址会在文章最后贴出，供大家研究学习。</p>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/09/23/基于Instant-Run思想的HotFix方案实现/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -545,6 +596,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -563,13 +615,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://halfstackdeveloper.github.io/2016/09/10/Android-Binder解密/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="XiandengWang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="HalfStackDeveloper">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="HalfStackDeveloper" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -595,39 +660,36 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-09-10T23:24:50+08:00" content="2016-09-10">
+            <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-09-10T23:24:50+08:00">
               2016-09-10
             </time>
+
+            &nbsp;|&nbsp;
+
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-check-o"></i>
+            </span>
+            <time title="Post modified" itemprop="dateModified" datetime="2016-09-11T13:57:38+08:00">
+              2016-09-11
+            </time>
+            
           </span>
 
           
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/09/10/Android-Binder解密/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/10/Android-Binder解密/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
 
           
           
-             <span id="/2016/09/10/Android-Binder解密/" class="leancloud_visitors" data-flag-title="Android Binder解密">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
 
           
+          
+          
+
         </div>
       </header>
     
@@ -641,11 +703,13 @@
       
         
           <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>稍微看过Android FrameWork层的人应该都知道Binder，因为app与系统服务之间的通信基本上都是建立在Binder的基础上。之前对Binder也是云里雾里，似懂非懂，于是花了不少时间，看了很多资料和源码，才大致了解了Binder通信的原理，总结出来，如有错误，还望指正。</p>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/09/10/Android-Binder解密/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -657,6 +721,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -675,13 +740,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://halfstackdeveloper.github.io/2016/08/31/Android-Handler-原理分析/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="XiandengWang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="HalfStackDeveloper">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="HalfStackDeveloper" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -707,39 +785,36 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-31T10:05:24+08:00" content="2016-08-31">
+            <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-08-31T10:05:24+08:00">
               2016-08-31
             </time>
+
+            &nbsp;|&nbsp;
+
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-check-o"></i>
+            </span>
+            <time title="Post modified" itemprop="dateModified" datetime="2016-08-31T10:17:35+08:00">
+              2016-08-31
+            </time>
+            
           </span>
 
           
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/08/31/Android-Handler-原理分析/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/31/Android-Handler-原理分析/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
 
           
           
-             <span id="/2016/08/31/Android-Handler-原理分析/" class="leancloud_visitors" data-flag-title="Android Handler 原理分析">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
 
           
+          
+          
+
         </div>
       </header>
     
@@ -754,11 +829,13 @@
         
           <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） </p>
 <p>平时开发app时，Handler简直已经被用烂了，它的主要工作就是负责子线程何主线程之间的通信。我相信你已经对Handler的使用熟能生巧了，但是你真的了解它吗？</p>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/08/31/Android-Handler-原理分析/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -770,6 +847,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -788,13 +866,26 @@
       
 
   
-  
 
   
   
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://halfstackdeveloper.github.io/2016/08/10/浅谈Instan-Run中的热替换/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="XiandengWang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="HalfStackDeveloper">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="HalfStackDeveloper" src="">
+    </span>
+  </span>
 
     
       <header class="post-header">
@@ -820,39 +911,36 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-10T15:02:08+08:00" content="2016-08-10">
+            <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-08-10T15:02:08+08:00">
               2016-08-10
             </time>
+
+            &nbsp;|&nbsp;
+
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-check-o"></i>
+            </span>
+            <time title="Post modified" itemprop="dateModified" datetime="2016-08-31T10:19:20+08:00">
+              2016-08-31
+            </time>
+            
           </span>
 
           
 
           
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/08/10/浅谈Instan-Run中的热替换/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/10/浅谈Instan-Run中的热替换/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
           
 
           
 
           
           
-             <span id="/2016/08/10/浅谈Instan-Run中的热替换/" class="leancloud_visitors" data-flag-title="浅谈Instan Run中的热替换">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
 
           
+          
+          
+
         </div>
       </header>
     
@@ -866,11 +954,13 @@
       
         
           <h2 id="前言"><a href="#前言" class="headerlink" title="前言:"></a>前言:</h2><p>自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了<strong>Instant Run</strong>这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 <a href="https://developer.android.com/studio/run/index.html#instant-run">https://developer.android.com/studio/run/index.html#instant-run</a></p>
+          <!--noindex-->
           <div class="post-more-link text-center">
             <a class="btn" href="/2016/08/10/浅谈Instan-Run中的热替换/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
+          <!--/noindex-->
         
       
     </div>
@@ -882,6 +972,7 @@
     <div>
       
     </div>
+
 
     <footer class="post-footer">
       
@@ -927,7 +1018,7 @@
 
       
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -961,6 +1052,9 @@
         
         
 
+        
+
+
       </section>
 
       
@@ -985,6 +1079,7 @@
   <span class="author" itemprop="copyrightHolder">XiandengWang</span>
 </div>
 
+
 <div class="powered-by">
   由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
 </div>
@@ -992,9 +1087,10 @@
 <div class="theme-info">
   主题 -
   <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Mist
+    NexT.Muse
   </a>
 </div>
+
 
         
 
@@ -1049,50 +1145,34 @@
   
 
 
-  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
 
-  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
-
-
-
-  
-  
-
-  
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
 
 
 
   
-
-  
-    
   
 
-  <script type="text/javascript">
-    var duoshuoQuery = {short_name:"halfstackdeveloper"};
-    (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-  </script>
-
   
-    
-    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
-    <script src="/js/src/hook-duoshuo.js"></script>
+
   
 
 
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
 
 
 
@@ -1105,113 +1185,8 @@
   
 
   
-  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
-  <script>AV.initialize("Umf9NNDeKyMJHSMtRxahHMKR-gzGzoHsz", "Xte46ItVMwCTsab96ISxrtlR");</script>
-  <script>
-    function showTime(Counter) {
-      var query = new AV.Query(Counter);
-      var entries = [];
-      var $visitors = $(".leancloud_visitors");
-
-      $visitors.each(function () {
-        entries.push( $(this).attr("id").trim() );
-      });
-
-      query.containedIn('url', entries);
-      query.find()
-        .done(function (results) {
-          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
-
-          if (results.length === 0) {
-            $visitors.find(COUNT_CONTAINER_REF).text(0);
-            return;
-          }
-
-          for (var i = 0; i < results.length; i++) {
-            var item = results[i];
-            var url = item.get('url');
-            var time = item.get('time');
-            var element = document.getElementById(url);
-
-            $(element).find(COUNT_CONTAINER_REF).text(time);
-          }
-          for(var i = 0; i < entries.length; i++) {
-            var url = entries[i];
-            var element = document.getElementById(url);
-            var countSpan = $(element).find(COUNT_CONTAINER_REF);
-            if( countSpan.text() == '') {
-              countSpan.text(0);
-            }
-          }
-        })
-        .fail(function (object, error) {
-          console.log("Error: " + error.code + " " + error.message);
-        });
-    }
-
-    function addCount(Counter) {
-      var $visitors = $(".leancloud_visitors");
-      var url = $visitors.attr('id').trim();
-      var title = $visitors.attr('data-flag-title').trim();
-      var query = new AV.Query(Counter);
-
-      query.equalTo("url", url);
-      query.find({
-        success: function(results) {
-          if (results.length > 0) {
-            var counter = results[0];
-            counter.fetchWhenSave(true);
-            counter.increment("time");
-            counter.save(null, {
-              success: function(counter) {
-                var $element = $(document.getElementById(url));
-                $element.find('.leancloud-visitors-count').text(counter.get('time'));
-              },
-              error: function(counter, error) {
-                console.log('Failed to save Visitor num, with error message: ' + error.message);
-              }
-            });
-          } else {
-            var newcounter = new Counter();
-            /* Set ACL */
-            var acl = new AV.ACL();
-            acl.setPublicReadAccess(true);
-            acl.setPublicWriteAccess(true);
-            newcounter.setACL(acl);
-            /* End Set ACL */
-            newcounter.set("title", title);
-            newcounter.set("url", url);
-            newcounter.set("time", 1);
-            newcounter.save(null, {
-              success: function(newcounter) {
-                var $element = $(document.getElementById(url));
-                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
-              },
-              error: function(newcounter, error) {
-                console.log('Failed to create');
-              }
-            });
-          }
-        },
-        error: function(error) {
-          console.log('Error:' + error.code + " " + error.message);
-        }
-      });
-    }
-
-    $(function() {
-      var Counter = AV.Object.extend("Counter");
-      if ($('.leancloud_visitors').length == 1) {
-        addCount(Counter);
-      } else if ($('.post-title-link').length > 1) {
-        showTime(Counter);
-      }
-    });
-  </script>
-
-
-
   
+
 
 </body>
 </html>
