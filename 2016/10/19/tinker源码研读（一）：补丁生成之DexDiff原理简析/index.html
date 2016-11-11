@@ -84,16 +84,18 @@
 
 
 
-<meta name="description" content="前言:自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了Instant Run这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 https://developer.android.com/studio/run/index.html#instant-run">
+<meta name="description" content="前言微信的热修复框架Tinker已经在国庆节之前开源了，成为了github.com/Tecent下第一个项目，刷爆了各位开发者的朋友圈。作为一个超级APP的HotFix库，Tinker不仅值得我们compile，更值得我们read。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="浅谈Instan Run中的热替换">
-<meta property="og:url" content="https://halfstackdeveloper.github.io/2016/08/10/浅谈Instan-Run中的热替换/index.html">
+<meta property="og:title" content="tinker源码研读（一）：补丁生成之DexDiff原理简析">
+<meta property="og:url" content="https://halfstackdeveloper.github.io/2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/index.html">
 <meta property="og:site_name" content="HalfStackDeveloper">
-<meta property="og:description" content="前言:自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了Instant Run这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 https://developer.android.com/studio/run/index.html#instant-run">
-<meta property="og:updated_time" content="2016-08-31T02:19:20.000Z">
+<meta property="og:description" content="前言微信的热修复框架Tinker已经在国庆节之前开源了，成为了github.com/Tecent下第一个项目，刷爆了各位开发者的朋友圈。作为一个超级APP的HotFix库，Tinker不仅值得我们compile，更值得我们read。">
+<meta property="og:image" content="http://od35ecbnl.bkt.clouddn.com/tinker.png">
+<meta property="og:updated_time" content="2016-10-19T04:46:27.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="浅谈Instan Run中的热替换">
-<meta name="twitter:description" content="前言:自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了Instant Run这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 https://developer.android.com/studio/run/index.html#instant-run">
+<meta name="twitter:title" content="tinker源码研读（一）：补丁生成之DexDiff原理简析">
+<meta name="twitter:description" content="前言微信的热修复框架Tinker已经在国庆节之前开源了，成为了github.com/Tecent下第一个项目，刷爆了各位开发者的朋友圈。作为一个超级APP的HotFix库，Tinker不仅值得我们compile，更值得我们read。">
+<meta name="twitter:image" content="http://od35ecbnl.bkt.clouddn.com/tinker.png">
 
 
 
@@ -114,9 +116,9 @@
 
 
 
-  <link rel="canonical" href="https://halfstackdeveloper.github.io/2016/08/10/浅谈Instan-Run中的热替换/"/>
+  <link rel="canonical" href="https://halfstackdeveloper.github.io/2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/"/>
 
-  <title> 浅谈Instan Run中的热替换 | HalfStackDeveloper </title>
+  <title> tinker源码研读（一）：补丁生成之DexDiff原理简析 | HalfStackDeveloper </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -246,7 +248,7 @@
             
             
               
-                浅谈Instan Run中的热替换
+                tinker源码研读（一）：补丁生成之DexDiff原理简析
               
             
           </h1>
@@ -258,8 +260,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-08-10T15:02:08+08:00" content="2016-08-10">
-              2016-08-10
+            <time itemprop="dateCreated" datetime="2016-10-19T11:45:50+08:00" content="2016-10-19">
+              2016-10-19
             </time>
           </span>
 
@@ -269,8 +271,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/08/10/浅谈Instan-Run中的热替换/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/10/浅谈Instan-Run中的热替换/" itemprop="commentsCount"></span>
+                <a href="/2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -280,7 +282,7 @@
 
           
           
-             <span id="/2016/08/10/浅谈Instan-Run中的热替换/" class="leancloud_visitors" data-flag-title="浅谈Instan Run中的热替换">
+             <span id="/2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/" class="leancloud_visitors" data-flag-title="tinker源码研读（一）：补丁生成之DexDiff原理简析">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -302,140 +304,129 @@
       
 
       
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言:"></a>前言:</h2><p>自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了<strong>Instant Run</strong>这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 <a href="https://developer.android.com/studio/run/index.html#instant-run" target="_blank" rel="external">https://developer.android.com/studio/run/index.html#instant-run</a></p>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>微信的热修复框架Tinker已经在国庆节之前开源了，成为了github.com/Tecent下第一个项目，刷爆了各位开发者的朋友圈。作为一个超级APP的HotFix库，Tinker不仅值得我们<strong>compile</strong>，更值得我们<strong>read</strong>。</p>
 <a id="more"></a>
-<font size="3" color="#000000"><strong>Instant Run主要分为三种方式来加载app:</strong></font>
-
-<p><font size="2" color="#4d4d4d"><strong>Hot Swap：</strong></font><br>这是最令人激动的方式，它可以在不重启Activity的情况下实现代码的替换，简直是逆天啊！但是热替换的条件很苛刻，只能是在简单的修改了代码的情况下，AS才会采用这种方式。</p>
-<p><font size="2" color="#4d4d4d"><strong>Warm Swap：</strong></font><br>暖替换，是对热替换的让步，它会重启你所修改的Activity，但是不会重启App。如果在项目中修改了资源，AS会自动选择这种方式。</p>
-<p><font size="2" color="#4d4d4d"><strong>Cold Swap:</strong></font><br>如果你改变了代码的结构，如继承和改变了方法名，那么AS也只能无奈的选择冷替换了，它会重启整个App。</p>
-<h2 id="探索"><a href="#探索" class="headerlink" title="探索:"></a>探索:</h2><p>接下来让我们来探索一下神奇的Hot Swap。</p>
-<p>这是一个很简单的Activity，就用它来窥探Instant Run吧。</p>
-<pre><code>public class MainActivity extends AppCompatActivity {
-    private Button mBtnTest;
-    private int mNum;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-           mBtnTest = (Button) findViewById(R.id.btn_test);
-        setListener();
-    }
-
-    private void setListener() {
-        mBtnTest.setOnClickListener(new View.OnClickListener() {
-                @Override
-            public void onClick(View v) {
-                mNum++;
-                Log.e(&quot;InstantRun&quot;, &quot;Num: &quot; + mNum);
-        });
-    }
-}
-</code></pre><p>点一下按钮，打出如下log：</p>
-<pre><code>08-11 16:51:16.730 4125-4125/com.wangxiandeng.instantruntest E/InstantRun: Num: 1
-</code></pre><p>再点一下：</p>
-<pre><code>08-11 16:54:36.300 4125-4125/com.wangxiandeng.instantruntest E/InstantRun: Num: 2
-</code></pre><p>你们看到现在，是不是心想，你特么在逗我么？别急，接着往下走。</p>
-<p>把代码修改为：</p>
-<pre><code>Log.e(&quot;InstantRun&quot;, &quot;Num: &quot; + mNum*2);
-</code></pre><p>点击Instan Run 闪电按钮⚡️，Activty没有重启，这时候再点击按钮</p>
-<pre><code>08-11 17:02:15.340 14022-14022/com.wangxiandeng.instantruntest E/InstantRun: Num: 6
-</code></pre><p>可见，mNum的值在Hot Swap时并没有重置，而是保持了之前的值：2，也就是说，Activity的所有生命周期方法并没有重走一遍，但是现在log打印出来为6，所以代码确实被替换了，那Hot Swap究竟是怎么做到这一点的呢，让我们来揭开它的神秘面纱。</p>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理:"></a>原理:</h2><p>Instant Run其实类似于这两年很火的Hotfix，根据Instant Run的思想，甚至可以自己去鼓捣出一个Hotfix库。</p>
-<p>Hot Swap 看起来很高大上，其实玩的就是狸猫换太子的把戏。在app的第一次编译阶段，它利用transform 在我们的每一个类里注入了一个变量：$change，这是一个IncrementalChange类型的变量。各位看官想必又要骂我了：你说注入就注入了啊？</p>
-<p>那我们回到刚才那个Activity，证明它被注入了$change字段。</p>
-<p>现在修改onClick中的代码如下：</p>
-<pre><code>Class clazz = MainActivity.class;
-try {
-    Field changeField = clazz.getDeclaredField(&quot;$change&quot;);
-    changeField.setAccessible(true);
-    Object changeValue = changeField.get(this);
-    Class changeClass = changeValue.getClass();
-} catch (Exception e) {
-    e.printStackTrace();
-} 
-</code></pre><p>  再次点击Activity中按钮，log打印为：</p>
-<pre><code>08-11 17:25:15.830 3311-3311/com.wangxiandeng.instantruntest E/InstantRun: Class: class com.wangxiandeng.instantruntest.MainActivity$override 
-</code></pre><p> 事实证明，Activity中确实有$change这个变量，细心的读者还会发现，这个$change 变量的运行类型为 com.wangxiandeng.instantruntest.MainActivity$override  </p>
-<p> 这里的MainActivity$override其实就是狸猫，也就是我们经常说的补丁，它实现了IncrementalChange接口，并且重写了MainActivity中的所有方法。我们在onClick中再加一句代码</p>
-<pre><code>printMethods(changeClass);
-</code></pre><p>printMethods会打印出MainActivity$override中的所有方法。</p>
-<pre><code>public static void printMethods(Class cl) {
-    Method[] methods = cl.getDeclaredMethods();
-    for (Method m : methods) {
-        Class retType = m.getReturnType();
-        String name = m.getName();
-        System.out.print(&quot;  &quot;);
-        String modifiers = Modifier.toString(m.getModifiers());
-        if (modifiers.length() &gt; 0) {
-            System.out.print(modifiers + &quot; &quot;);
-        }
-        System.out.print(retType.getName() + &quot; &quot; + name + &quot;(&quot;);
-        Class[] paramTypes = m.getParameterTypes();
-        for (int j = 0; j &lt; paramTypes.length; j++) {
-            System.out.print(paramTypes[j].getName());
-            if (j &lt; paramTypes.length - 1) {
-                System.out.print(&quot;, &quot;);
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>Tinker和以往的HotFix库思路不太一样，它更像是APP的增量更新，在服务器端通过差异性算法，计算出新旧dex之间的差异包，推送到客户端，进行合成。传统的差异性算法有BsDiff，而Tinker的牛逼之处就在于它自己基于Dex的文件格式，研发出了DexDiff算法。</p>
+<h2 id="补丁生成之DexDiff"><a href="#补丁生成之DexDiff" class="headerlink" title="补丁生成之DexDiff"></a>补丁生成之DexDiff</h2><p>补丁生成是在编译阶段进行的，当我们在build.gradle中配置好tinkerOldApkPath后，调用tinkerPatchDebug，补丁就开始生成了。</p>
+<p>调用链为：</p>
+<p>TinkerPatchSchemaTask.tinkerPatch()<br>-&gt;Runner.gradleRun()<br>-&gt;Runner.run()<br>-&gt;Runner.tinkerPatch()<br>-&gt;ApkDecoder.patch()<br>……<br>-&gt;DexPatchGenerator.executeAndSaveTo()</p>
+<p>executeAndSaveTo()方法是DexDiff算法的真正入口，DexDiff算法的特点在于它深入分析了Dex文件格式，深度利用Dex的格式来减少差异大小。</p>
+<p>在了解DexDiff之前，我们需要对Dex文件有个初步了解，Dex的文件格式如下表。参考自这里：<a href="http://www.cnblogs.com/cncooper/p/4361819.html" target="_blank" rel="external">Dalvik可执行格式（dex）上</a></p>
+<table>
+<thead>
+<tr>
+<th>数据名称</th>
+<th style="text-align:center">解释         </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>header</td>
+<td style="text-align:center">dex文件头部，记录整个dex文件的相关属性</td>
+</tr>
+<tr>
+<td>string_ids</td>
+<td style="text-align:center">字符串标识列表，涉及了文件中所用到的所有字符串，包括内部名称（比如类型描述符）或者代码引用的常量对象。这个列表根据字符串内容按照UTF-16（避免了各地区语言差异导致的不同）来进行排序，不得包含重复条目</td>
+</tr>
+<tr>
+<td>type_ids</td>
+<td style="text-align:center">类型标识列表，涉及了文件中所有用到的类型（如类、数组或者原始类型），不论是否是在文件中定义。这个列表必须按照类型字符串在string_ids中的索引来排序，不得含有重复条目。</td>
+</tr>
+<tr>
+<td>proto_ids</td>
+<td style="text-align:center">方法原型标识列表涉及了文件中所有用到的方法原型。列表按返回值类型在type_ids中的索引进行排序，索引相同的话再按参数类型在type_ids中的索引排序，不得含有重复条目。</td>
+</tr>
+<tr>
+<td>field_ids</td>
+<td style="text-align:center">类属性（类成员）标识列表，涉及了文件中所有用到的类属性，不论其是否在文件中定义。列表依次按照所在类的类型（按type_ids索引）、属性名（按string_ids索引）、自身类型（按type_ids索引）进行排序，不得含有重复条目。</td>
+</tr>
+<tr>
+<td>method_ids</td>
+<td style="text-align:center">方法标识列表，涉及了文件中所有用到的方法，不论是否在文件中定义。列表依次按照方法所在类的类型（按type_ids索引）、方法名（按string_ids索引）、方法原型（按proto_ids索引），不得含有重复条目。</td>
+</tr>
+<tr>
+<td>class_defs</td>
+<td style="text-align:center">类定义列表，列表的顺序必须符合一个类的基类以及其所实现的接口在这个类的前面这一规则。此外，列表中出现多个同名类的定义是无效的。</td>
+</tr>
+<tr>
+<td>data</td>
+<td style="text-align:center">数据区，包含上述各个结构所需的所有支持数据。不同的条目有不同的数据对齐要求，如果有需要，会在条目之前插入若干字节以满足合适的对齐</td>
+</tr>
+<tr>
+<td>link_data</td>
+<td style="text-align:center">用于静态链接文件的数据，数据的类型其实是不确定的，对于不存在链接的文件，这个区域是空的，此外不同的运行时实现也会对这一区域的数据格式做相应修改。</td>
+</tr>
+</tbody>
+</table>
+<p>想要深入了解Dex文件格式的可以看Google官方文档：<a href="https://source.android.com/devices/tech/dalvik/dex-format.html" target="_blank" rel="external">https://source.android.com/devices/tech/dalvik/dex-format.html</a>，《Android软件安全与逆向分析》这本书里关于Dex文件也有很详细的讲解。</p>
+<p>了解了Dex的格式后，让我们来看一下DexDiff的基本步骤。</p>
+<p><strong>DexDiff的主要步骤如下：</strong></p>
+<p><strong>Step1:</strong>计算出new dex中每项Section的大小，比如string_ids在dex文件中所占大小。</p>
+<pre><code>int patchedStringIdsSize = newDex.getTableOfContents().stringIds.size * SizeOf.STRING_ID_ITEM;
+</code></pre><p><strong>step2:</strong>根据表中前一项的偏移地址和大小，计算出每项Section的偏移地址。</p>
+<pre><code>this.patchedStringIdsOffset = patchedHeaderOffset + patchedheaderSize;
+</code></pre><p><strong>step3:</strong>调用DexSectionDiffAlgorithm.execute()，将new dex与old dex中的每项section进行对比，对于每项Section，遍历其每一项Item，进行新旧对比，记录ADD，DEL标识，存放于patchOperationList中。接着遍历patchOperationList，添加REPLACE标识，最后将ADD，DEL，REPLACE操作分别记录到各自的List中。</p>
+<p>这里面的新旧对比的算法很有趣，它是直接将oldItem.compareTo(newItem)，结果小于0记为DEL，大于0记为ADD。为什么可以直接这样比较呢？别忘啦，从上面Dex文件格式表中可知，Dex文件中的Section都是经过排序的。</p>
+<p><img src="http://od35ecbnl.bkt.clouddn.com/tinker.png" alt=""></p>
+<p>上图中，old dex中下标为2的item “c” 被DEL，c后面的元素前移，new dex中下标5处ADD一个item “f”，而在下标8处又ADD一个item “j”。</p>
+<p>下标5的”f”在这里被记为ADD，但是它其实是REPLACE了”g”。在之后遍历patchOperationList时，算法会判断operation前一个opearation（prevPatchOperation）的类型，若prevPatchOperation为DEL，而自己刚好为ADD，那么就将自己的类型改为REPLACE。</p>
+<pre><code>Iterator&lt;PatchOperation&lt;T&gt;&gt; patchOperationIt = this.patchOperationList.iterator();
+PatchOperation&lt;T&gt; prevPatchOperation = null;
+while (patchOperationIt.hasNext()) {
+   PatchOperation&lt;T&gt; patchOperation = patchOperationIt.next();
+   if (prevPatchOperation != null
+       &amp;&amp; prevPatchOperation.op == PatchOperation.OP_DEL
+       &amp;&amp; patchOperation.op == PatchOperation.OP_ADD
+      ) {
+          if (prevPatchOperation.index == patchOperation.index) {
+              prevPatchOperation.op = PatchOperation.OP_REPLACE;
+              prevPatchOperation.newItem = patchOperation.newItem;
+              patchOperationIt.remove();
+              prevPatchOperation = null;
+            } else {
+              prevPatchOperation = patchOperation;
             }
+        } else {
+            prevPatchOperation = patchOperation;
         }
-        System.out.println(&quot;);&quot;);
+ }
+</code></pre><p><strong>step4:</strong>调用DexPatchGenerator.writePatchOperations()，将记录写入补丁。<br>对于DEL：<br>开辟一块DelOpIndexList大小的区域(DelOpIndexList中记录了每块要删除部分的索引),遍历记录DelOpIndexList，对于每一个DEL索引，计算出其相对于前一个DEL索引的偏移，记录偏移量。</p>
+<pre><code>buffer.writeUleb128(delOpIndexList.size());
+    int lastIndex = 0;
+    for (Integer index : delOpIndexList) {
+        buffer.writeSleb128(index - lastIndex);
+        lastIndex = index;
     }
+</code></pre><p>对于ADD和REPLACE，也会进行和DEL一样的操作。</p>
+<pre><code>buffer.writeUleb128(addOpIndexList.size());
+    lastIndex = 0;
+    for (Integer index : addOpIndexList) {
+        buffer.writeSleb128(index - lastIndex);
+        lastIndex = index;
+    }
+
+buffer.writeUleb128(replaceOpIndexList.size());
+    lastIndex = 0;
+    for (Integer index : replaceOpIndexList) {
+        buffer.writeSleb128(index - lastIndex);
+        lastIndex = index;
+    }
+</code></pre><p>不同的一点是，ADD和REPALACE还会接着写入新增和替换的item。</p>
+<pre><code> for (T newItem : newItemList) {
+        if (newItem instanceof StringData) {
+            buffer.writeStringData((StringData) newItem);
+        } else
+        if (newItem instanceof Integer) {
+            // TypeId item.
+            buffer.writeInt((Integer) newItem);
+        } else
+        if (newItem instanceof TypeList) {
+            buffer.writeTypeList((TypeList) newItem);
+        }
+        ......
 }
-</code></pre><p>点击Activity中按钮，打印出方法如下：</p>
-<pre><code>public transient java.lang.Object access$dispatch(java.lang.String, [Ljava.lang.Object;);
-
-public static java.lang.Object init$args([Lcom.wangxiandeng.instantruntest.MainActivity;, [Ljava.lang.Object;);
-
-public static void init$body(com.wangxiandeng.instantruntest.MainActivity, [Ljava.lang.Object;);
-
-public static void onCreate(com.wangxiandeng.instantruntest.MainActivity, android.os.Bundle);
-
-public static void printMethods(java.lang.Class);
-
-public static void setListener(com.wangxiandeng.instantruntest.MainActivity);
-</code></pre><p>从Log中可以看出，MainActivity$override中包含了MainActivity中所有的方法，包括onCreate(),  printMethods(),  setListener()。</p>
-<p>看到这里，聪明的读者应该已经猜测出Instan Run的原理了，其实也就是和代理差不多，MainActivity在执行方法时，会先判断它的代理（$change）是否为空，如果不为空，就执行代理里的方法。这样当我们修改了某个类方法里的代码，AS会自动的创建一个该类的代理（xx$override),并将代理赋值给该类的$chang字段，这样我们的修改在不重启Activity的情况下也能生效了。</p>
-<p>代理类是通过access$dispatch()方法来进行函数分发的，传入的参数为所要执行方法的签名和参数，access$dispatch()会根据方法签名的hashcode寻找到目标方法，并传入参数执行。接下来我们再来试验一下。</p>
-<p>在MainActivity中再添加一个方法：</p>
-<pre><code>private void sayHello(String text) {
-    Log.e(&quot;InstantRun&quot;, text);
-}
-</code></pre><p>接着在onClick try块中再添加两行代码，通过反射MainActivity$override 中的access$dispatch()方法，实现调用补丁中的sayHello()。</p>
-<pre><code>Method dispatchMethod = changeClass.getDeclaredMethod(&quot;access$dispatch&quot;, new Class[]{String.class, Object[].class});
-dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, new Object[]{MainActivity.this, &quot;Hello World!&quot;});
-</code></pre><p>在第二行代码中，我们将sayHello()的方法签名以及一个“Hello World!”字符串传入给access$dispatch方法，接下来看看能不能成功的调用sayHello()。</p>
-<pre><code>08-11 17:25:15.840 3311-3311/com.wangxiandeng.instantruntest E/InstantRun: Hello World!
-</code></pre><p>Log中成功的打印出了Hello World! </p>
-<p>到这里，大家应该对Instan Run Hot Swap的来龙去脉有所了解了，那么补丁文件又是怎么加载进来的呢？<br>当我们修改代码，并点击运行按钮时，AS会创建一个AppPatchesLoaderImpl，该类中记录了哪些类被修改了，然后通过scoket，将补丁文件和AppPatchesLoaderImpl发送到设备，调用设备的<br>handleHotSwapPatch()方法。</p>
-<pre><code>private int handleHotSwapPatch(int updateMode, @NonNull ApplicationPatch patch) {
-   try {
-       String dexFile = FileManager.writeTempDexFile(patch.getBytes());
-       String nativeLibraryPath = FileManager.getNativeLibraryFolder().getPath();
-       DexClassLoader dexClassLoader = new DexClassLoader(dexFile,
-               mApplication.getCacheDir().getPath(), nativeLibraryPath,
-               getClass().getClassLoader());
-       // we should transform this process with an interface/impl
-       Class&lt;?&gt; aClass = Class.forName(
-               &quot;com.android.tools.fd.runtime.AppPatchesLoaderImpl&quot;, true, dexClassLoader);
-       try {
-           PatchesLoader loader = (PatchesLoader) aClass.newInstance();
-           String[] getPatchedClasses = (String[]) aClass
-                   .getDeclaredMethod(&quot;getPatchedClasses&quot;).invoke(loader);
-           if (!loader.load()) {
-               updateMode = UPDATE_MODE_COLD_SWAP;
-           }
-       } catch (Exception e) {
-           updateMode = UPDATE_MODE_COLD_SWAP;
-       }
-   } catch (Throwable e) {
-       updateMode = UPDATE_MODE_COLD_SWAP;
-   }
-   return updateMode;
-   }
-</code></pre><p>该方法首先新建了一个ClassLoader，将补丁记录类AppPatchesLoaderImpl加载进来，然后调用AppPatchesLoaderImpl的load方法，load()方法中会遍历并记载所有的补丁类，并反射原有类的$change变量，赋值以补丁类。</p>
-<p>想深入了解补丁加载的同学，可以看一看w4lle’s Notes的文章<a href="http://w4lle.github.io/2016/05/02/从Instant%20run谈Android替换Application和动态加载机制/" target="_blank" rel="external">《从Instant run谈Android替换Application和动态加载机制》</a>。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结:"></a>总结:</h2><p>至此为止，Instan Run中的Hot Swap基本流程已经讲完了，总的来说就是代理，有点类似支付宝的Andfix，不过Andfix是从jni层去修改方法指针，本质其实都是替换掉目标方法，运行补丁方法。</p>
+</code></pre><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这里只是简单的介绍了DexDiff的简要过程，中间其实省去了很多细节，而这些细节与Dex文件格式联系非常紧密，想要彻底的了解DexDiff原理，还需好好研究Dex文件。</p>
+<p>(转载请注明ID:<strong>半栈工程师</strong>，欢迎访问<strong>个人博客</strong>：<a href="https://halfstackdeveloper.github.io/">https://halfstackdeveloper.github.io/</a>)</p>
 
       
     </div>
@@ -461,12 +452,16 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2016/09/23/基于Instant-Run思想的HotFix方案实现/" rel="next" title="基于Instant Run思想的HotFix方案实现">
+                <i class="fa fa-chevron-left"></i> 基于Instant Run思想的HotFix方案实现
+              </a>
+            
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/08/31/Android-Handler-原理分析/" rel="prev" title="Android Handler 原理分析">
-                Android Handler 原理分析 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/11/11/如何利用RecyclerView打造炫酷滑动卡片/" rel="prev" title="如何利用RecyclerView打造炫酷滑动卡片">
+                如何利用RecyclerView打造炫酷滑动卡片 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -499,8 +494,8 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/08/10/浅谈Instan-Run中的热替换/"
-           data-title="浅谈Instan Run中的热替换" data-url="https://halfstackdeveloper.github.io/2016/08/10/浅谈Instan-Run中的热替换/">
+      <div class="ds-thread" data-thread-key="2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/"
+           data-title="tinker源码研读（一）：补丁生成之DexDiff原理简析" data-url="https://halfstackdeveloper.github.io/2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/">
       </div>
     
   </div>
@@ -577,7 +572,7 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#探索"><span class="nav-number">2.</span> <span class="nav-text">探索:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">3.</span> <span class="nav-text">原理:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结:</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补丁生成之DexDiff"><span class="nav-number">3.</span> <span class="nav-text">补丁生成之DexDiff</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
           </div>
         </section>
