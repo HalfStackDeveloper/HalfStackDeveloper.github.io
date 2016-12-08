@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="源码分析," />
 
 
 
@@ -92,7 +92,7 @@
 <meta property="og:site_name" content="HalfStackDeveloper">
 <meta property="og:description" content="前言（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） 
 平时开发app时，Handler简直已经被用烂了，它的主要工作就是负责子线程何主线程之间的通信。我相信你已经对Handler的使用熟能生巧了，但是你真的了解它吗？">
-<meta property="og:updated_time" content="2016-08-31T02:17:35.000Z">
+<meta property="og:updated_time" content="2016-12-08T03:24:43.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android Handler 原理分析">
 <meta name="twitter:description" content="前言（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） 
@@ -211,14 +211,6 @@
           <a href="/tags" rel="section">
             
             标签
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-schedule">
-          <a href="/schedule" rel="section">
-            
-            日程
           </a>
         </li>
       
@@ -553,6 +545,7 @@ msg.target.dispatchMessage(msg);
 
     })
 </code></pre><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以上就是Handler与Looper的哀怨情仇。总得来说，Looper就像是一个邮局，Handler通过sendMessage()将信件交给Looper，放到邮局的仓库mQueue里，邮局Looper再不断的从仓库中取出信，交还给信对应的Handler，收信人调用handleMessage()来读信。</p>
+<p><strong>(转载请标明ID：半栈工程师，个人博客：<a href="https://halfstackdeveloper.github.io">https://halfstackdeveloper.github.io</a>)</strong></p>
 
       
     </div>
@@ -572,6 +565,12 @@ msg.target.dispatchMessage(msg);
     </div>
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/源码分析/" rel="tag">#源码分析</a>
+          
+        </div>
       
 
       
@@ -673,6 +672,13 @@ msg.target.dispatchMessage(msg);
 
           
 
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
           
 
         </nav>

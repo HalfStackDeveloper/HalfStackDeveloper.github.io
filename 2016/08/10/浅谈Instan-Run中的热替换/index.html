@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="HotFix," />
 
 
 
@@ -90,7 +90,7 @@
 <meta property="og:url" content="https://halfstackdeveloper.github.io/2016/08/10/浅谈Instan-Run中的热替换/index.html">
 <meta property="og:site_name" content="HalfStackDeveloper">
 <meta property="og:description" content="前言:自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了Instant Run这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 https://developer.android.com/studio/run/index.html#instant-run">
-<meta property="og:updated_time" content="2016-08-31T02:19:20.000Z">
+<meta property="og:updated_time" content="2016-12-08T03:24:13.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈Instan Run中的热替换">
 <meta name="twitter:description" content="前言:自从Android Studio 2.0发布以来，相信广大的攻城狮朋友们都已经用上了Instant Run这个新特性，还没用上的朋友们，赶紧去Google官网了解一下吧 https://developer.android.com/studio/run/index.html#instant-run">
@@ -208,14 +208,6 @@
           <a href="/tags" rel="section">
             
             标签
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-schedule">
-          <a href="/schedule" rel="section">
-            
-            日程
           </a>
         </li>
       
@@ -447,6 +439,7 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
 </code></pre><p>该方法首先新建了一个ClassLoader，将补丁记录类AppPatchesLoaderImpl加载进来，然后调用AppPatchesLoaderImpl的load方法，load()方法中会遍历并记载所有的补丁类，并反射原有类的$change变量，赋值以补丁类。</p>
 <p>想深入了解补丁加载的同学，可以看一看w4lle’s Notes的文章<a href="http://w4lle.github.io/2016/05/02/从Instant%20run谈Android替换Application和动态加载机制/" target="_blank" rel="external">《从Instant run谈Android替换Application和动态加载机制》</a>。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结:"></a>总结:</h2><p>至此为止，Instan Run中的Hot Swap基本流程已经讲完了，总的来说就是代理，有点类似支付宝的Andfix，不过Andfix是从jni层去修改方法指针，本质其实都是替换掉目标方法，运行补丁方法。</p>
+<p><strong>(转载请标明ID：半栈工程师，个人博客：<a href="https://halfstackdeveloper.github.io">https://halfstackdeveloper.github.io</a>)</strong></p>
 
       
     </div>
@@ -466,6 +459,12 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
     </div>
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/HotFix/" rel="tag">#HotFix</a>
+          
+        </div>
       
 
       
@@ -563,6 +562,13 @@ dispatchMethod.invoke(changeValue, &quot;sayHello.(Ljava/lang/String;)V&quot;, n
 
           
 
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
           
 
         </nav>
