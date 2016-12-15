@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://od35ecbnl.bkt.clouddn.com/flyme.png">
 <meta property="og:image" content="http://od35ecbnl.bkt.clouddn.com/quanxian.jpeg">
 <meta property="og:image" content="http://od35ecbnl.bkt.clouddn.com/floatball.gif">
-<meta property="og:updated_time" content="2016-12-15T05:25:58.000Z">
+<meta property="og:updated_time" content="2016-12-15T08:19:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="轻松自制flyme悬浮球">
 <meta name="twitter:description" content="前言去年用了一整年的MX4Pro，魅族留给我最大的印象就是悬浮球了（质量问题我就不说了），左右滑动切换应用、上拉返回桌面、下拉打开通知栏、轻触返回…，一切都那么丝滑。然而自从上半年换成了s7dege，我感觉怎么也习惯不了没有悬浮球的生活了。">
@@ -360,7 +360,7 @@
        postDelayed(new Runnable() {
                @Override
                public void run() {
-                   if (mIsTouching &amp;&amp; mCurrentMode == MODE_NONE) {
+                   if (isLongTouch()) {
                        mIsLongTouch = true;
                        mVibrator.vibrate(mPattern, -1);
                    }
