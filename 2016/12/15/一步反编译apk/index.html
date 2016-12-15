@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="工具," />
 
 
 
@@ -84,12 +84,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="HalfStackDeveloper">
-<meta property="og:url" content="https://halfstackdeveloper.github.io/archives/2016/10/index.html">
+<meta name="description" content="前言昨天因为一件事需要反编译apk，查看dex文件里的class，于是我按照传统的做法一步步来反编译，可真是烦死我了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一步反编译apk">
+<meta property="og:url" content="https://halfstackdeveloper.github.io/2016/12/15/一步反编译apk/index.html">
 <meta property="og:site_name" content="HalfStackDeveloper">
+<meta property="og:description" content="前言昨天因为一件事需要反编译apk，查看dex文件里的class，于是我按照传统的做法一步步来反编译，可真是烦死我了。">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/2819184-3944d108eeecbe82.gif?imageMogr2/auto-orient/strip">
+<meta property="og:updated_time" content="2016-12-15T06:44:32.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HalfStackDeveloper">
+<meta name="twitter:title" content="一步反编译apk">
+<meta name="twitter:description" content="前言昨天因为一件事需要反编译apk，查看dex文件里的class，于是我按照传统的做法一步步来反编译，可真是烦死我了。">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/2819184-3944d108eeecbe82.gif?imageMogr2/auto-orient/strip">
 
 
 
@@ -110,10 +116,10 @@
 
 
 
-  <link rel="canonical" href="https://halfstackdeveloper.github.io/archives/2016/10/"/>
+  <link rel="canonical" href="https://halfstackdeveloper.github.io/2016/12/15/一步反编译apk/"/>
 
 
-  <title> 归档 | HalfStackDeveloper </title>
+  <title> 一步反编译apk | HalfStackDeveloper </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -144,7 +150,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left  page-archive  ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
@@ -224,66 +230,151 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <span class="archive-move-on"></span>
-
-    <span class="archive-page-counter">
-      
-      
-      
-        
-      
-      嗯..! 目前共计 8 篇日志。 继续努力。
-    </span>
-
+  <div id="posts" class="posts-expand">
     
 
-      
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                一步反编译apk
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-15T13:20:41+08:00" content="2016-12-15">
+              2016-12-15
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/15/一步反编译apk/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/15/一步反编译apk/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/12/15/一步反编译apk/" class="leancloud_visitors" data-flag-title="一步反编译apk">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
       
       
 
       
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>昨天因为一件事需要反编译apk，查看dex文件里的class，于是我按照传统的做法一步步来反编译，可真是烦死我了。<br><a id="more"></a></p>
+<p><strong>1.更改apk后缀名为zip，解压。</strong><br><strong>2.拷贝里面的dex文件放入dex2jar目录</strong><br><strong>3.终端切换到dex2jar目录，调用d2j-dex2jar.sh 一个个的反编译dex</strong><br><strong>4.打开JD_GUI查看</strong>    </p>
+<p>这些步骤说多不多，说少也不少啊，身为程序员，怎么可以如机器人一般，做这种重复性的工作呢！于是我晚上回到家，就开始着手写脚本，要一步反编译查看apk。</p>
+<h2 id="HOW-TO-USE"><a href="#HOW-TO-USE" class="headerlink" title="HOW TO USE"></a>HOW TO USE</h2><p>脚本很简单，用Python写的，主要就是将传统做法的几个步骤，利用脚本进行了整合，很快就写完了。<br><strong>github地址：</strong><a href="https://github.com/HalfStackDeveloper/DexLooker" target="_blank" rel="external">https://github.com/HalfStackDeveloper/DexLooker</a><br><strong>那么怎么使用呢？</strong></p>
+<h4 id="1-下载工程解压并复制到本地任意目录"><a href="#1-下载工程解压并复制到本地任意目录" class="headerlink" title="1.下载工程解压并复制到本地任意目录"></a>1.下载工程解压并复制到本地任意目录</h4><h4 id="2-添加本地工程地址到系统环境变量"><a href="#2-添加本地工程地址到系统环境变量" class="headerlink" title="2.添加本地工程地址到系统环境变量"></a>2.添加本地工程地址到系统环境变量</h4><h5 id="2-1-打开终端，输入-open-e-bash-profile"><a href="#2-1-打开终端，输入-open-e-bash-profile" class="headerlink" title="2.1 打开终端，输入 open -e .bash_profile"></a>2.1 打开终端，输入 open -e .bash_profile</h5><h5 id="2-2-添加本地工程路径至bash-profile文件并保存。例如："><a href="#2-2-添加本地工程路径至bash-profile文件并保存。例如：" class="headerlink" title="2.2 添加本地工程路径至bash_profile文件并保存。例如："></a>2.2 添加本地工程路径至bash_profile文件并保存。例如：</h5><pre><code># dexlooker
+export PATH=$PATH:/Users/wangxiandeng/Documents/MyCoding/PythonWork/DexLooker/dexlooker
+</code></pre><h4 id="3-现在就可以使用了：在终端输入-dexlooker-py，拖入你的apk文件，将会自动为你反编译apk并打开JD-GUI查看jar文件"><a href="#3-现在就可以使用了：在终端输入-dexlooker-py，拖入你的apk文件，将会自动为你反编译apk并打开JD-GUI查看jar文件" class="headerlink" title="3.现在就可以使用了：在终端输入 dexlooker.py，拖入你的apk文件，将会自动为你反编译apk并打开JD-GUI查看jar文件"></a>3.现在就可以使用了：在终端输入 dexlooker.py，拖入你的apk文件，将会自动为你反编译apk并打开JD-GUI查看jar文件</h4><p><img src="http://upload-images.jianshu.io/upload_images/2819184-3944d108eeecbe82.gif?imageMogr2/auto-orient/strip" alt="demo.gif"></p>
+<p><strong>（喜欢的话去github给个star哦）</strong></p>
+
+      
+    </div>
+
+    <div>
+      
         
-        <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-2016">2016</h2>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/工具/" rel="tag">#工具</a>
+          
         </div>
       
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/27/轻松自制flyme悬浮球/" rel="next" title="轻松自制flyme悬浮球">
+                <i class="fa fa-chevron-left"></i> 轻松自制flyme悬浮球
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
       
 
       
-
-  <article class="post post-type-normal" itemscope itemtype="//schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2016/10/19/tinker源码研读（一）：补丁生成之DexDiff原理简析/" itemprop="url">
-              
-                <span itemprop="name">tinker源码研读（一）：补丁生成之DexDiff原理简析</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-10-19T11:45:50+08:00"
-              content="2016-10-19" >
-          10-19
-        </time>
-      </div>
-
-    </header>
+      
+    </footer>
   </article>
 
 
 
-    
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
 
-  </section>
-
-  
-
+      
+    </div>
+  </div>
 
 
           </div>
@@ -291,6 +382,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/15/一步反编译apk/"
+           data-title="一步反编译apk" data-url="https://halfstackdeveloper.github.io/2016/12/15/一步反编译apk/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -310,8 +409,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="http://od35ecbnl.bkt.clouddn.com/me.jpeg"
@@ -354,6 +462,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HOW-TO-USE"><span class="nav-number">2.</span> <span class="nav-text">HOW TO USE</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-下载工程解压并复制到本地任意目录"><span class="nav-number">2.0.1.</span> <span class="nav-text">1.下载工程解压并复制到本地任意目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-添加本地工程地址到系统环境变量"><span class="nav-number">2.0.2.</span> <span class="nav-text">2.添加本地工程地址到系统环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-打开终端，输入-open-e-bash-profile"><span class="nav-number">2.0.2.1.</span> <span class="nav-text">2.1 打开终端，输入 open -e .bash_profile</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-添加本地工程路径至bash-profile文件并保存。例如："><span class="nav-number">2.0.2.2.</span> <span class="nav-text">2.2 添加本地工程路径至bash_profile文件并保存。例如：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-现在就可以使用了：在终端输入-dexlooker-py，拖入你的apk文件，将会自动为你反编译apk并打开JD-GUI查看jar文件"><span class="nav-number">2.0.3.</span> <span class="nav-text">3.现在就可以使用了：在终端输入 dexlooker.py，拖入你的apk文件，将会自动为你反编译apk并打开JD-GUI查看jar文件</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -450,11 +569,9 @@
   
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
 
 
   

@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://od35ecbnl.bkt.clouddn.com/flyme.png">
 <meta property="og:image" content="http://od35ecbnl.bkt.clouddn.com/quanxian.jpeg">
 <meta property="og:image" content="http://od35ecbnl.bkt.clouddn.com/floatball.gif">
-<meta property="og:updated_time" content="2016-12-08T07:11:48.000Z">
+<meta property="og:updated_time" content="2016-12-15T05:25:58.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="轻松自制flyme悬浮球">
 <meta name="twitter:description" content="前言去年用了一整年的MX4Pro，魅族留给我最大的印象就是悬浮球了（质量问题我就不说了），左右滑动切换应用、上拉返回桌面、下拉打开通知栏、轻触返回…，一切都那么丝滑。然而自从上半年换成了s7dege，我感觉怎么也习惯不了没有悬浮球的生活了。">
@@ -358,29 +358,16 @@
        mLastDownX = event.getX();
        mLastDownY = event.getY();
        postDelayed(new Runnable() {
-          @Override
-          public void run() {
-            if (!mIsLongTouch &amp;&amp; mIsTouching &amp;&amp; mCurrentMode == MODE_NONE) {
-                    mIsLongTouch = isLongClick(event);
-               }
-          }
+               @Override
+               public void run() {
+                   if (mIsTouching &amp;&amp; mCurrentMode == MODE_NONE) {
+                       mIsLongTouch = true;
+                       mVibrator.vibrate(mPattern, -1);
+                   }
+             }
        }, LONG_CLICK_LIMIT);
        break;
-</code></pre><p> 代码最后的postDealy时干嘛使的呢？就是通过延迟300毫秒，判断是否是长按模式。其中判断长按的方法代码如下：</p>
-<pre><code>private boolean isLongClick(MotionEvent event) {
-    float offsetX = Math.abs(event.getX() - mLastDownX);
-    float offsetY = Math.abs(event.getY() - mLastDownY);
-    long time = System.currentTimeMillis() - mLastDownTime;
-
-    if (offsetX &lt; mTouchSlop &amp;&amp; offsetY &lt; mTouchSlop &amp;&amp; time &gt;= LONG_CLICK_LIMIT) {
-        //震动提醒
-        mVibrator.vibrate(mPattern, -1);
-        return true;
-    } else {
-        return false;
-    }
-}
-</code></pre><p><strong>（2）手指移动时</strong></p>
+</code></pre><p> 代码最后的postDealy时干嘛使的呢？就是通过延迟300毫秒，判断是否是长按模式。如果目前还没有处于其他模式，则可判断为长按，并震动提醒。<br><strong>（2）手指移动时</strong></p>
 <p>这时要判断是否是处于长按状态，如果是，那么进入MOVE模式，移动悬浮球，如果不是，则判断操作手势，即下拉还是上拉等其他手势。</p>
 <pre><code>case MotionEvent.ACTION_MOVE:
       if (!mIsLongTouch &amp;&amp; isTouchSlop(event)) {
@@ -511,6 +498,10 @@ case MotionEvent.ACTION_UP:
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2016/12/15/一步反编译apk/" rel="prev" title="一步反编译apk">
+                一步反编译apk <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -587,7 +578,7 @@ case MotionEvent.ACTION_UP:
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">7</span>
+              <span class="site-state-item-count">8</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -597,7 +588,7 @@ case MotionEvent.ACTION_UP:
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
