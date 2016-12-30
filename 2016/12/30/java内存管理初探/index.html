@@ -1,0 +1,869 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="前言前不久为知笔记宣布收费，用不惯印象笔记和有道的我，便充了一年的会员，既然钱已经花了出去，就不能像以前一样，不懂得珍惜，刚好最近在重读《深入理解java虚拟机》，关于内存管理这块又多了一些收获，便记录下来，顺便整理成博客，还是毛主席教导的好：好记性不如烂笔头啊！文中前部分简摘自周志华老师的《深入理解java虚拟机》，后部分为个人的一些验证和总结。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java内存管理初探">
+<meta property="og:url" content="https://halfstackdeveloper.github.io/2016/12/30/java内存管理初探/index.html">
+<meta property="og:site_name" content="HalfStackDeveloper">
+<meta property="og:description" content="前言前不久为知笔记宣布收费，用不惯印象笔记和有道的我，便充了一年的会员，既然钱已经花了出去，就不能像以前一样，不懂得珍惜，刚好最近在重读《深入理解java虚拟机》，关于内存管理这块又多了一些收获，便记录下来，顺便整理成博客，还是毛主席教导的好：好记性不如烂笔头啊！文中前部分简摘自周志华老师的《深入理解java虚拟机》，后部分为个人的一些验证和总结。">
+<meta property="og:updated_time" content="2016-12-30T03:59:58.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java内存管理初探">
+<meta name="twitter:description" content="前言前不久为知笔记宣布收费，用不惯印象笔记和有道的我，便充了一年的会员，既然钱已经花了出去，就不能像以前一样，不懂得珍惜，刚好最近在重读《深入理解java虚拟机》，关于内存管理这块又多了一些收获，便记录下来，顺便整理成博客，还是毛主席教导的好：好记性不如烂笔头啊！文中前部分简摘自周志华老师的《深入理解java虚拟机》，后部分为个人的一些验证和总结。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://halfstackdeveloper.github.io/2016/12/30/java内存管理初探/"/>
+
+
+  <title> java内存管理初探 | HalfStackDeveloper </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?c8b534c01ba08fa1de45cca8b77a25d1";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">HalfStackDeveloper</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                java内存管理初探
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-30T10:24:50+08:00" content="2016-12-30">
+              2016-12-30
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/30/java内存管理初探/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/30/java内存管理初探/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/12/30/java内存管理初探/" class="leancloud_visitors" data-flag-title="java内存管理初探">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前不久为知笔记宣布收费，用不惯印象笔记和有道的我，便充了一年的会员，既然钱已经花了出去，就不能像以前一样，不懂得珍惜，刚好最近在重读《深入理解java虚拟机》，关于内存管理这块又多了一些收获，便记录下来，顺便整理成博客，还是毛主席教导的好：好记性不如烂笔头啊！<strong>文中前部分简摘自周志华老师的<a href="https://item.jd.com/11252778.html" target="_blank" rel="external">《深入理解java虚拟机》</a>，后部分为个人的一些验证和总结。</strong></p>
+<a id="more"></a>
+<h2 id="java中的引用"><a href="#java中的引用" class="headerlink" title="java中的引用"></a>java中的引用</h2><p>相对于C++，Java语言非常好的一点就是不需要我们手动管理内存，因为有一个像妈妈一样的虚垃圾回收器，每天默默地替我们清扫着房间的垃圾，无怨无悔。基本上所有的java程序员都知道有这么个默默无闻的妈妈，可是你真的了解她吗？</p>
+<p>上面提到垃圾回收器替我们清扫垃圾，那么重要的一点来了，什么是垃圾？在现实生活中，没有用的东西就是垃圾，会被丢进垃圾桶，运到处理厂，掩埋或是焚烧。其实在java的世界里也是一样，无用即为垃圾，不过这里的垃圾全都是：对象。</p>
+<p>什么叫无用，即没有人要用，在java里，无用即代表没有被引用，java里面操控对象全都是通过引用来进行的，For Example：Object o=new Object()，这里我们就创建了一个Object对象，并用一个引用o来引用这个对象，这样我们就可以通过o来操作这个Obejct了。</p>
+<p>java里一共有四种引用：</p>
+<p><strong>1.强引用</strong></p>
+<p>这就是我们上面写的Obejct o=new Object()，只要强引用还存在，对象就不会被回收。</p>
+<p><strong>2.软引用</strong></p>
+<p>SoftReference，只有将发生内存溢出时，才会进行回收。</p>
+<p><strong>3.弱引用</strong></p>
+<p>WeakReference，GC工作时，无论当前内存是否够用，一定会回收。</p>
+<p><strong>4.虚引用</strong></p>
+<p>PhantomReference, 有这个引用和没有一样，因为通过引用拿到的一定是null，和弱引用一样，GC工作时一定会被回收，唯一的作用就是监听对象被GC回收，可以用来做GC监听器，监听虚拟机的每一次GC。</p>
+<h2 id="内存回收"><a href="#内存回收" class="headerlink" title="内存回收"></a>内存回收</h2><p><strong>1.引用——计数法</strong></p>
+<p>即在对象头部增加一个计数器，每当对象被引用，内部的计数器就+1，当引用失效，计数器就-1。这样当垃圾回收时，就回收那些计数值为0的对象。</p>
+<p>缺点：很难解决对象之间相互循环引用的问题。</p>
+<p><strong>2.标记——清除法</strong></p>
+<p>从堆栈和静态存储区出发，遍历所有引用，找出所有存活的对象。每当找到一个对象，就给它设置一个标记，这样它就不会被回收。</p>
+<p>缺点：清除后会产生大量的不连续空间，这样对于将来大对象的内存分配是不利的，因为可能因为找不到连续的大块内存，不得不触发下一次gc。</p>
+<p><strong>3.复制——清除法</strong></p>
+<p>将可用空间分为两块A和B，每次只使用AB其中的一块，比如当A中内存已满的时候，就将A中所有存活的对象一次性复制到B中，然后清空整个A区。一般来说，98%的对象都是朝生夕死，所有没必要1:1的分配AB，所以一般会将内存划分为3块，一块较大的Eden区，两块较小的Survivor区。每次使用Eden和一块Survivor，GC时将存活对象移动到另一块Survivor中。但是一块Survivor可能容纳不下所有的存活对象，所以需要依赖另一块进行分配担保，只能将存活的一部分对象放入担保中，这就是内存的分配担保机制。</p>
+<p><strong>4.标记——整理法</strong></p>
+<p>这种方法的标记过程和标记清除算法一样，但是它解决了标记清除的问题。它的清扫过程不是直接进行的，而是先将所有存活对象都移动到一边，然后整个清扫那一边，这样就不存在内存空间不连续的问题了。</p>
+<h2 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h2><p><strong>1.对象优先在新生代中分配</strong></p>
+<p>新生代分为Eden区和Survivor区，大小比例通常为8:1，新对象一般在Eden区进行分配，当Eden区已满时，虚拟机会发起一次GC，将Eden区还存活的对象移动至Survivor区，并一次性清扫Eden区。</p>
+<p><strong>大对象直接进入老年代</strong></p>
+<p>所谓的大对象是指需要大量连续内存空间的对象，比如说很长的字符串或者数组。经常出现大对象容易导致内存还有不少空间时就要进行gc，以获取足够空间来存放它们。</p>
+<p><strong>长期存活的对象将进入老年代</strong></p>
+<p>如果对象在Eden区出生，并能够顺利熬过第一次gc，且能被Survivor区容纳的话，那么将被移动到Survivor区，并初始化年龄为1岁，以后每熬过一次gc，年龄就加一次，当年龄增加到一定程度（默认15），就会晋升到老年代中。</p>
+<h2 id="分代收集"><a href="#分代收集" class="headerlink" title="分代收集"></a>分代收集</h2><p>对于所有的对象总不能一刀切吧，每种算法都有其缺点和优点。所以一般会将对象划分为新生代和老年代，对于新生代这种朝生夕死的对象，用复制清除算法，并采用老年代进行担保。而对于老年代中生命力较为顽强的对象，采用复制清除是不合适的，因为需要巨大的空间来进行分配担保，所以一般会采用标记清除或者标记整理算法。</p>
+<h2 id="两点疑问"><a href="#两点疑问" class="headerlink" title="两点疑问"></a>两点疑问</h2><p><strong>1.为什么新生代采用复制清除法？</strong></p>
+<p>新生代gc比较频繁、对象存活率低，用复制算法在回收时的效率会更高，也不会产生内存碎片。</p>
+<p><strong>2.为什么复制清除法需要两块Survivor区？</strong></p>
+<p><strong><em>如果说只有一块Survivor区，那么会发生如下情况：</em></strong></p>
+<p>第一次GC：Eden区的存活对象移动到Survivor区；</p>
+<p>第二次GC：Eden区和Survivor区都发生了GC，都会只有一部分对象存活，这时再将Eden区存活对象复制至Survivor区，因为Survior自身存活对象的不连续性，便会产生内存碎片。</p>
+<p><strong><em>如果有两块Survivor区（S1，S2）的话，情况就能好很多：</em></strong></p>
+<p>第一次GC：Eden区的存活对象移动到S1区，S2空闲；</p>
+<p>第二次GC：Eden区和S1区都发生了GC，都会只有一部分对象存活，这时再将Eden和S1的存活对象复制至S2区，这时Eden和S1又会保持空闲，且S2中的空闲内存也是连续的。</p>
+<h2 id="内存实战"><a href="#内存实战" class="headerlink" title="内存实战"></a>内存实战</h2><h3 id="GC日志分析"><a href="#GC日志分析" class="headerlink" title="GC日志分析"></a>GC日志分析</h3><p>只学习理论是不够的，只会似懂非懂，绝知此事要躬行，下面我们就来通过实战分析一下垃圾回收器。</p>
+<p>首先通过定时器每秒分配一个100M的大数组，并实时查看内存使用情况。</p>
+<pre><code>public static void main(String[] args) {
+    Timer timer = new Timer();
+    TimerTask task = new TimerTask() {
+        @Override
+        public void run() {
+            Runtime runtime = Runtime.getRuntime();
+            System.out.print(&quot;total:&quot;+(runtime.totalMemory()/1024)+ &quot;k\n&quot;);
+            long free=runtime.freeMemory()/1024;
+            System.out.print(&quot;free:&quot; + free+ &quot;k\n&quot;);
+            if(free&lt;102400){
+                System.out.print(&quot;need gc&quot;+&quot;\n&quot;);
+            }
+            byte[] a1 = new byte[100 * 1024 * 1024];
+            a1[1] = 1;
+            System.out.print(a1[1]+&quot;\n&quot;);
+        }
+    };
+    timer.schedule(task, 1000, 1000);
+}
+</code></pre><p>下面来看看打印出的信息：</p>
+<pre><code>total:251392k
+free:243527k
+1
+total:251392k
+free:141127k
+1
+total:354304k
+free:141639k
+1
+total:457216k
+free:142151k
+1
+total:560128k
+free:142663k
+</code></pre><p> 可见分配大对象时，虚拟机并不是频繁的gc，而是在不断的申请内存，totalMemory在不断变大。</p>
+<p>下面在通过设置-XX:+PrintGCDetails来打印GC日志：</p>
+<pre><code>max:3728384k
+total:2872832k
+free:100166k
+need gc
+[GC (Allocation Failure) [PSYoungGen: 7864K-&gt;480K(76288K)] 2772665K-&gt;2765280K(2872832K), 0.0423481 secs] [Times: user=0.15 sys=0.01, real=0.05 secs] 
+[GC (Allocation Failure) [PSYoungGen: 480K-&gt;448K(76288K)] 2765280K-&gt;2765256K(2872832K), 0.0365171 secs] [Times: user=0.11 sys=0.00, real=0.03 secs] 
+[Full GC (Allocation Failure) [PSYoungGen: 448K-&gt;0K(76288K)] [ParOldGen: 2764808K-&gt;423K(79360K)] 2765256K-&gt;423K(155648K), [Metaspace: 3019K-&gt;3019K(1056768K)], 0.4096268 secs] [Times: user=0.04 sys=0.37, real=0.41 secs] 
+
+1
+max:3728384k
+total:258560k
+free:154426k
+</code></pre><p>通过GC日志可知，当连续空间不够时，分配对象失败，然后会针对新生代发起一次minorGC，内存使用从7864k降低到了480k，这样还剩余75808k，但是还不够分配102400k的数组，所以接下来又因为分配失败发起一次minorGC，但是这次却没有回收到太多垃圾，那么怎么办，只能往老年代分配了。现在我们来计算一下老年代还有多少空间：</p>
+<pre><code>old = total - young = 2872832 - 76288 =2796544k
+oldFree = old - oldUsed = 2796544 - 2764808 =31736k
+</code></pre><p>老年代也只剩余31736k的空间，根本不够分配102400k的数组，这时就出现了内存分配担保失败，也就导致了下一步的发生：Full GC。</p>
+<p>Full GC一般都是担保失败才出现，表明这次GC发生了Stop The World，会对所有年代进行回收。可以看见，第三次GC后，新生代对象被全部回收，老年代的大对象也基本被回收，但是这次GC后totalMemory变小了，从 2872832k 降低为 155648k 了。这时无论是新生代还是老年代都不够分配数组了，所以只能申请更大的内存空间了，分配数组后totalMemory又升至 258560k了。</p>
+<p>当手动停止程序后，又打印出了新的堆内存日志：</p>
+<pre><code>Heap
+PSYoungGen  total 76288K, used 3058K [0x000000076ab00000, 0x0000000774000000, 0x00000007c0000000)
+    eden space 65536K, 4% used [0x000000076ab00000,0x000000076adfca70,0x000000076eb00000)
+    from space 10752K, 0% used [0x000000076f580000,0x000000076f580000,0x0000000770000000)
+    to   space 10752K, 0% used [0x000000076eb00000,0x000000076eb00000,0x000000076f580000)
+ParOldGen   total 799744K, used 717223K [0x00000006c0000000, 0x00000006f0d00000, 0x000000076ab00000)
+    object space 799744K, 89% used [0x00000006c0000000,0x00000006ebc69d08,0x00000006f0d00000)
+
+Metaspace   used 3029K, capacity 4500K, committed 4864K, reserved 1056768K
+    class space    used 331K, capacity 388K, committed 512K, reserved 1048576K
+</code></pre><p>从上面可以看出，新生代中eden区只使用了4%的空间，而老年代却使用了89%的空间，这也印证了大对象都在老年代中进行分配。</p>
+<h2 id="内存监控"><a href="#内存监控" class="headerlink" title="内存监控"></a>内存监控</h2><p>只看GC日志的话，很多信息无法得到，那么最好的办法就是实时监控内存了。</p>
+<p>接下来对上面的程序进行一些小改变，通过一个类变量对分配的数组加以强引用，这样保证数组不会被gc回收掉，然后我们就可以来监控JVM了。</p>
+<p><strong>1.输入jps -l，打印出进程pid</strong></p>
+<pre><code>WangXiandengdeMacBook-Pro:test wangxiandeng$ jps -l
+38464 
+66083 com.intellij.rt.execution.application.AppMain
+15875 com.xk72.charles.macosx.Main
+66082 org.jetbrains.jps.cmdline.Launcher
+66084 sun.tools.jps.Jps
+22155 
+</code></pre><p>AppMain即为当前运行的进程pid，为66083。</p>
+<p><strong>2.利用jstat来监控该进程</strong></p>
+<pre><code>WangXiandengdeMacBook-Pro:test wangxiandeng$ jstat -gc 66083 1000 100
+ S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT   
+
+
+10752.0 10752.0  0.0    0.0   65536.0   6554.2   175104.0     0.0     4480.0 771.4  384.0   75.8       0    0.000   0      0.000    0.000
+10752.0 10752.0  0.0    0.0   65536.0   7864.9   175104.0   102400.0  4480.0 771.4  384.0   75.8       0    0.000   0      0.000    0.000
+10752.0 10752.0  0.0    0.0   65536.0   7864.9   278016.0   204800.0  4480.0 771.4  384.0   75.8       0    0.000   0      0.000    0.000
+10752.0 10752.0  0.0    0.0   65536.0   7864.9   380928.0   307200.0  4480.0 771.4  384.0   75.8       0    0.000   0      0.000    0.000
+................
+
+10752.0 10752.0  0.0    0.0   65536.0   7864.9  2796544.0  2764800.4  4480.0 771.4  384.0   75.8       0    0.000   0      0.000    0.000
+10752.0 10752.0  0.0    0.0   65536.0    0.0    2796544.0  2765263.3  4864.0 3069.5 512.0  335.1       3    0.124   2      0.072    0.196
+</code></pre><p>可见，100m的数组全都是直接在老年代中直接分配，最后一行可以看出，此时内存已经不够分配，于是发生了3次minorGC，2次FullGC，但是因为老年代中的数组全被强引用了，导致无法回收。</p>
+<pre><code>[GC (Allocation Failure) [PSYoungGen: 7864K-&gt;512K(76288K)] 2772665K-&gt;2765320K(2872832K), 0.0433492 secs] [Times: user=0.16 sys=0.01, real=0.04 secs] 
+[GC (Allocation Failure) [PSYoungGen: 512K-&gt;496K(76288K)] 2765320K-&gt;2765304K(2872832K), 0.0422158 secs] [Times: user=0.11 sys=0.00, real=0.04 secs] 
+[Full GC (Allocation Failure) [PSYoungGen: 496K-&gt;0K(76288K)] [ParOldGen: 2764808K-&gt;2765263K(2796544K)] 2765304K-&gt;2765263K(2872832K), [Metaspace: 3069K-&gt;3069K(1056768K)], 0.0720605 secs] [Times: user=0.04 sys=0.07, real=0.08 secs] 
+[GC (Allocation Failure) [PSYoungGen: 0K-&gt;0K(76288K)] 2765263K-&gt;2765263K(2872832K), 0.0388848 secs] [Times: user=0.15 sys=0.00, real=0.03 secs] 
+[Full GC (Allocation Failure) [PSYoungGen: 0K-&gt;0K(76288K)] [ParOldGen: 2765263K-&gt;2765246K(2796544K)] 2765263K-&gt;2765246K(2872832K), [Metaspace: 3069K-&gt;3069K(1056768K)], 0.0291437 secs] [Times: user=0.04 sys=0.00, real=0.03 secs] 
+
+Exception in thread &quot;Timer-0&quot; java.lang.OutOfMemoryError: Java heap space
+at com.wangxiandeng.test.Test$1.run(Test.java:30)
+at java.util.TimerThread.mainLoop(Timer.java:555)
+at java.util.TimerThread.run(Timer.java:505)
+</code></pre><p>这时虽然totalMemory远未达到maxMemeory，但是因为老年代能够分配到的空间有限，即老年代已经不能申请到新的空间了，而这些大数组又无法放入新生代中，所以只能内存溢出了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>虽然了解java不需要我们手动管理内存，但是了解这方面还是很有必要的，一是可以避免写出导致频繁GC、内存泄漏和溢出的代码，二是可以对虚拟机进行调优，虽然一般调优都是服务器端同学的事，但是今天却看到了维术同学的一篇新文章<a href="http://weishu.me/2016/12/23/dive-into-android-optimize-vm-heap/" target="_blank" rel="external">《Android性能优化之虚拟机调优》</a>,很是佩服。</p>
+<p><strong>（如有错误，欢迎指正！）</strong></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag">#Java</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/15/一步反编译apk/" rel="next" title="一步反编译apk">
+                <i class="fa fa-chevron-left"></i> 一步反编译apk
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/30/java内存管理初探/"
+           data-title="java内存管理初探" data-url="https://halfstackdeveloper.github.io/2016/12/30/java内存管理初探/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://od35ecbnl.bkt.clouddn.com/me.jpeg"
+               alt="XiandengWang" />
+          <p class="site-author-name" itemprop="name">XiandengWang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#java中的引用"><span class="nav-number">2.</span> <span class="nav-text">java中的引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存回收"><span class="nav-number">3.</span> <span class="nav-text">内存回收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存分配"><span class="nav-number">4.</span> <span class="nav-text">内存分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分代收集"><span class="nav-number">5.</span> <span class="nav-text">分代收集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#两点疑问"><span class="nav-number">6.</span> <span class="nav-text">两点疑问</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存实战"><span class="nav-number">7.</span> <span class="nav-text">内存实战</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GC日志分析"><span class="nav-number">7.1.</span> <span class="nav-text">GC日志分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存监控"><span class="nav-number">8.</span> <span class="nav-text">内存监控</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">9.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XiandengWang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"halfstackdeveloper"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Umf9NNDeKyMJHSMtRxahHMKR-gzGzoHsz", "Xte46ItVMwCTsab96ISxrtlR");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+
+</body>
+</html>
