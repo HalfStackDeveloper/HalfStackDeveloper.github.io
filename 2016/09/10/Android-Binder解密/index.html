@@ -92,7 +92,7 @@
 <meta property="og:description" content="前言稍微看过Android FrameWork层的人应该都知道Binder，因为app与系统服务之间的通信基本上都是建立在Binder的基础上。之前对Binder也是云里雾里，似懂非懂，于是花了不少时间，看了很多资料和源码，才大致了解了Binder通信的原理，总结出来，如有错误，还望指正。">
 <meta property="og:image" content="http://od35ecbnl.bkt.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202016-09-06%20%E4%B8%8B%E5%8D%8810.03.15.png">
 <meta property="og:image" content="http://od35ecbnl.bkt.clouddn.com/demo.gif">
-<meta property="og:updated_time" content="2016-12-08T03:24:35.000Z">
+<meta property="og:updated_time" content="2017-01-03T08:29:51.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android Binder解密">
 <meta name="twitter:description" content="前言稍微看过Android FrameWork层的人应该都知道Binder，因为app与系统服务之间的通信基本上都是建立在Binder的基础上。之前对Binder也是云里雾里，似懂非懂，于是花了不少时间，看了很多资料和源码，才大致了解了Binder通信的原理，总结出来，如有错误，还望指正。">
@@ -623,6 +623,8 @@ interface IDictionaryManager {
 <p>上面说到ServiceManager是ContextManager的代理，因为ContextManager本身也就是一个服务，服务端和客户端想调用它的addService或getService时，也必须通过ServiceManager来跨进程。可是我该怎么拿到这个代理呢？我总不能调用它的getService来获取它自己吧。Binder这一点设计的很奇妙，ContextManager在BinderDriver中的节点索引为0，谁让它是老大呢。这样大家都知道了，我想调用ContextManger，直接根据handle＝0就可以生成它的代理对象BpBinder了，从而创建代理对象ServiceManager。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>系统中每个app和系统服务都活在自己的进程中，无法访问彼此的内存空间，正是因为相互通信的强烈需求，从而诞生了Binder。Binder驱动就像所有进程共同的地盘，系统服务可以这里留下自己的地址，而客户端可以可以根据这些地址找到对应的服务，相互通信，从而千里姻缘一线牵，百年恩爱双心结。</p>
 <p><strong>(转载请标明ID：半栈工程师，个人博客：<a href="https://halfstackdeveloper.github.io">https://halfstackdeveloper.github.io</a>)</strong></p>
+<p><strong>欢迎关注我的知乎专栏：<a href="https://zhuanlan.zhihu.com/halfstack" target="_blank" rel="external">https://zhuanlan.zhihu.com/halfstack</a></strong></p>
+<p><strong>欢迎Follow我的github: <a href="https://github.com/HalfStackDeveloper" target="_blank" rel="external">https://github.com/HalfStackDeveloper</a></strong></p>
 
       
     </div>
@@ -800,7 +802,7 @@ interface IDictionaryManager {
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2016</span>
+  <span itemprop="copyrightYear">2017</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

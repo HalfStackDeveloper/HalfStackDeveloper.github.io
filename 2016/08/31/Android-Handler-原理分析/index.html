@@ -92,7 +92,7 @@
 <meta property="og:site_name" content="HalfStackDeveloper">
 <meta property="og:description" content="前言（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） 
 平时开发app时，Handler简直已经被用烂了，它的主要工作就是负责子线程何主线程之间的通信。我相信你已经对Handler的使用熟能生巧了，但是你真的了解它吗？">
-<meta property="og:updated_time" content="2016-12-08T03:24:43.000Z">
+<meta property="og:updated_time" content="2017-01-03T08:30:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android Handler 原理分析">
 <meta name="twitter:description" content="前言（该文半年前写于CSDN，回头看看，觉得写的不太好，稍微修改一下） 
@@ -546,6 +546,8 @@ msg.target.dispatchMessage(msg);
     })
 </code></pre><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以上就是Handler与Looper的哀怨情仇。总得来说，Looper就像是一个邮局，Handler通过sendMessage()将信件交给Looper，放到邮局的仓库mQueue里，邮局Looper再不断的从仓库中取出信，交还给信对应的Handler，收信人调用handleMessage()来读信。</p>
 <p><strong>(转载请标明ID：半栈工程师，个人博客：<a href="https://halfstackdeveloper.github.io">https://halfstackdeveloper.github.io</a>)</strong></p>
+<p><strong>欢迎关注我的知乎专栏：<a href="https://zhuanlan.zhihu.com/halfstack" target="_blank" rel="external">https://zhuanlan.zhihu.com/halfstack</a></strong></p>
+<p><strong>欢迎Follow我的github: <a href="https://github.com/HalfStackDeveloper" target="_blank" rel="external">https://github.com/HalfStackDeveloper</a></strong></p>
 
       
     </div>
@@ -723,7 +725,7 @@ msg.target.dispatchMessage(msg);
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2016</span>
+  <span itemprop="copyrightYear">2017</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

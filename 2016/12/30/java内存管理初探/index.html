@@ -90,7 +90,7 @@
 <meta property="og:url" content="https://halfstackdeveloper.github.io/2016/12/30/java内存管理初探/index.html">
 <meta property="og:site_name" content="HalfStackDeveloper">
 <meta property="og:description" content="前言前不久为知笔记宣布收费，用不惯印象笔记和有道的我，便充了一年的会员，既然钱已经花了出去，就不能像以前一样，不懂得珍惜，刚好最近在重读《深入理解java虚拟机》，关于内存管理这块又多了一些收获，便记录下来，顺便整理成博客，还是毛主席教导的好：好记性不如烂笔头啊！文中前部分简摘自周志华老师的《深入理解java虚拟机》，后部分为个人的一些验证和总结。">
-<meta property="og:updated_time" content="2016-12-30T03:59:58.000Z">
+<meta property="og:updated_time" content="2017-01-03T08:30:09.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="java内存管理初探">
 <meta name="twitter:description" content="前言前不久为知笔记宣布收费，用不惯印象笔记和有道的我，便充了一年的会员，既然钱已经花了出去，就不能像以前一样，不懂得珍惜，刚好最近在重读《深入理解java虚拟机》，关于内存管理这块又多了一些收获，便记录下来，顺便整理成博客，还是毛主席教导的好：好记性不如烂笔头啊！文中前部分简摘自周志华老师的《深入理解java虚拟机》，后部分为个人的一些验证和总结。">
@@ -450,6 +450,9 @@ at java.util.TimerThread.run(Timer.java:505)
 </code></pre><p>这时虽然totalMemory远未达到maxMemeory，但是因为老年代能够分配到的空间有限，即老年代已经不能申请到新的空间了，而这些大数组又无法放入新生代中，所以只能内存溢出了。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>虽然了解java不需要我们手动管理内存，但是了解这方面还是很有必要的，一是可以避免写出导致频繁GC、内存泄漏和溢出的代码，二是可以对虚拟机进行调优，虽然一般调优都是服务器端同学的事，但是今天却看到了维术同学的一篇新文章<a href="http://weishu.me/2016/12/23/dive-into-android-optimize-vm-heap/" target="_blank" rel="external">《Android性能优化之虚拟机调优》</a>,很是佩服。</p>
 <p><strong>（如有错误，欢迎指正！）</strong></p>
+<p><strong>(转载请标明ID：半栈工程师，个人博客：<a href="https://halfstackdeveloper.github.io">https://halfstackdeveloper.github.io</a>)</strong></p>
+<p><strong>欢迎关注我的知乎专栏：<a href="https://zhuanlan.zhihu.com/halfstack" target="_blank" rel="external">https://zhuanlan.zhihu.com/halfstack</a></strong></p>
+<p><strong>欢迎Follow我的github: <a href="https://github.com/HalfStackDeveloper" target="_blank" rel="external">https://github.com/HalfStackDeveloper</a></strong></p>
 
       
     </div>
@@ -623,7 +626,7 @@ at java.util.TimerThread.run(Timer.java:505)
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2016</span>
+  <span itemprop="copyrightYear">2017</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
