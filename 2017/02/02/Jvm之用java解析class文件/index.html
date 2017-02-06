@@ -1,0 +1,950 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="JVM," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="前言：身为一个java程序员，怎么能不了解JVM呢，倘若想学习JVM，那就又必须要了解Class文件，Class之于虚拟机，就如鱼之于水，虚拟机因为Class而有了生命。《深入理解java虚拟机》中花了一整个章节来讲解Class文件，可是看完后，一直都还是迷迷糊糊，似懂非懂。正好前段时间看见一本书很不错：《自己动手写Java虚拟机》，作者利用go语言实现了一个简单的JVM，虽然没有完整实现JVM的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jvm之用java解析class文件">
+<meta property="og:url" content="https://halfstackdeveloper.github.io/2017/02/02/Jvm之用java解析class文件/index.html">
+<meta property="og:site_name" content="HalfStackDeveloper">
+<meta property="og:description" content="前言：身为一个java程序员，怎么能不了解JVM呢，倘若想学习JVM，那就又必须要了解Class文件，Class之于虚拟机，就如鱼之于水，虚拟机因为Class而有了生命。《深入理解java虚拟机》中花了一整个章节来讲解Class文件，可是看完后，一直都还是迷迷糊糊，似懂非懂。正好前段时间看见一本书很不错：《自己动手写Java虚拟机》，作者利用go语言实现了一个简单的JVM，虽然没有完整实现JVM的">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/2819184-074175c331654878.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/2819184-e9f6f30da0638117.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/2819184-ef31ee8c0256cf89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-02-06T08:26:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jvm之用java解析class文件">
+<meta name="twitter:description" content="前言：身为一个java程序员，怎么能不了解JVM呢，倘若想学习JVM，那就又必须要了解Class文件，Class之于虚拟机，就如鱼之于水，虚拟机因为Class而有了生命。《深入理解java虚拟机》中花了一整个章节来讲解Class文件，可是看完后，一直都还是迷迷糊糊，似懂非懂。正好前段时间看见一本书很不错：《自己动手写Java虚拟机》，作者利用go语言实现了一个简单的JVM，虽然没有完整实现JVM的">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/2819184-074175c331654878.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://halfstackdeveloper.github.io/2017/02/02/Jvm之用java解析class文件/"/>
+
+
+  <title> Jvm之用java解析class文件 | HalfStackDeveloper </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?c8b534c01ba08fa1de45cca8b77a25d1";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">HalfStackDeveloper</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Jvm之用java解析class文件
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-02-02T20:36:54+08:00" content="2017-02-02">
+              2017-02-02
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/02/02/Jvm之用java解析class文件/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/02/Jvm之用java解析class文件/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2017/02/02/Jvm之用java解析class文件/" class="leancloud_visitors" data-flag-title="Jvm之用java解析class文件">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>身为一个java程序员，怎么能不了解JVM呢，倘若想学习JVM，那就又必须要了解Class文件，Class之于虚拟机，就如鱼之于水，虚拟机因为Class而有了生命。《深入理解java虚拟机》中花了一整个章节来讲解Class文件，可是看完后，一直都还是迷迷糊糊，似懂非懂。正好前段时间看见一本书很不错：《自己动手写Java虚拟机》，作者利用go语言实现了一个简单的JVM，虽然没有完整实现JVM的所有功能，但是对于一些对JVM稍感兴趣的人来说，可读性还是很高的。作者讲解的很详细，每个过程都分为了一章，其中一部分就是讲解如何解析Class文件。</p>
+<p>这本书不太厚，很快就读完了，读完后，收获颇丰。但是纸上得来终觉浅，绝知此事要躬行，我便尝试着自己解析Class文件。go语言虽然很优秀，但是终究不熟练，尤其是不太习惯其把类型放在变量之后的语法，还是老老实实用java吧。</p>
+<p><strong>话不多说，先贴出项目地址：<a href="https://github.com/HalfStackDeveloper/ClassReader" target="_blank" rel="external">https://github.com/HalfStackDeveloper/ClassReader</a></strong></p>
+<h2 id="Class文件"><a href="#Class文件" class="headerlink" title="Class文件"></a>Class文件</h2><h3 id="什么是Class文件？"><a href="#什么是Class文件？" class="headerlink" title="什么是Class文件？"></a>什么是Class文件？</h3><p>java之所以能够实现跨平台，便在于其编译阶段不是将代码直接编译为平台相关的机器语言，而是先编译成二进制形式的java字节码，放在Class文件之中，虚拟机再加载Class文件，解析出程序运行所需的内容。每个类都会被编译成一个单独的class文件，内部类也会作为一个独立的类，生成自己的class。</p>
+<h3 id="基本结构"><a href="#基本结构" class="headerlink" title="基本结构"></a>基本结构</h3><p>随便找到一个class文件，用Sublime Text打开是这样的：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2819184-074175c331654878.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="屏幕快照 2017-02-06 上午8.44.42.png"></p>
+<p>是不是一脸懵逼，不过java虚拟机规范中给出了class文件的基本格式，只要按照这个格式去解析就可以了：</p>
+<pre><code>ClassFile {
+    u4 magic;
+       u2 minor_version;
+       u2 major_version;
+       u2 constant_pool_count;
+       cp_info constant_pool[constant_pool_count-1];
+       u2 access_flags;
+       u2 this_class;
+       u2 super_class;
+       u2 interfaces_count;
+       u2 interfaces[interfaces_count];
+       u2 fields_count;
+       field_info fields[fields_count];
+       u2 methods_count;
+      method_info methods[methods_count];
+       u2 attributes_count;
+       attribute_info attributes[attributes_count];
+}
+</code></pre><p>ClassFile中的字段类型有u1、u2、u4,这是什么类型呢？其实很简单，就是分别表示1个字节，2个字节和4个字节。</p>
+<p>开头四个字节为：magic，是用来唯一标识文件格式的，一般被称作magic number（魔数），这样虚拟机才能识别出所加载的文件是否是class格式，class文件的魔数为cafebabe。不只是class文件，基本上大部分文件都有魔数，用来标识自己的格式。</p>
+<p>接下来的部分主要是class文件的一些信息，如常量池、类访问标志、父类、接口信息、字段、方法等，具体的信息可参考《Java虚拟机规范》。</p>
+<h2 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h2><h3 id="字段类型"><a href="#字段类型" class="headerlink" title="字段类型"></a>字段类型</h3><p>上面说到ClassFile中的字段类型有u1、u2、u4，分别表示1个字节，2个字节和4个字节的无符号整数。java中short、int、long分别为2、4、8个字节的有符号整数，去掉符号位，刚好可以用来表示u1、u2、u4。</p>
+<pre><code>public class U1 {
+    public static short read(InputStream inputStream) {
+        byte[] bytes = new byte[1];
+        try {
+            inputStream.read(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        short value = (short) (bytes[0] &amp; 0xFF);
+        return value;
+    }
+}
+
+public class U2 {
+    public static int read(InputStream inputStream) {
+        byte[] bytes = new byte[2];
+        try {
+            inputStream.read(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int num = 0;
+        for (int i= 0; i &lt; bytes.length; i++) {
+            num &lt;&lt;= 8;
+            num |= (bytes[i] &amp; 0xff);
+        }
+        return num;
+    }
+}                                                                                                                                                                                   
+
+public class U4 {
+    public static long read(InputStream inputStream) {
+        byte[] bytes = new byte[4];
+        try {
+            inputStream.read(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        long num = 0;
+        for (int i= 0; i &lt; bytes.length; i++) {
+            num &lt;&lt;= 8;
+            num |= (bytes[i] &amp; 0xff);
+        }
+        return num;
+    }
+}
+</code></pre><h3 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h3><p>定义好字段类型后，我们就可以读取class文件了，首先是读取魔数之类的基本信息，这部分很简单：</p>
+<pre><code>FileInputStream inputStream = new FileInputStream(file);
+ClassFile classFile = new ClassFile();
+classFile.magic = U4.read(inputStream);
+classFile.minorVersion = U2.read(inputStream);
+classFile.majorVersion = U2.read(inputStream);
+</code></pre><p>这部分只是热热身，接下来的大头在于常量池。解析常量池之前，我们先来解释一下常量池是什么。</p>
+<p>常量池，顾名思义，存放常量的资源池，这里的常量指的是字面量和符号引用。字面量指的是一些字符串资源，而符号引用分为三类：类符号引用、方法符号引用和字段符号引用。通过将资源放在常量池中，其他项就可以直接定义成常量池中的索引了，避免了空间的浪费，不只是class文件，Android可执行文件dex也是同样如此，将字符串资源等放在DexData中，其他项通过索引定位资源。java虚拟机规范给出了常量池中每一项的格式：</p>
+<pre><code>cp_info {
+    u1 tag;
+    u1 info[]; 
+}
+</code></pre><p>上面的这个格式只是一个通用格式，常量池中真正包含的数据有14种格式，每种格式的tag值不同,具体如下所示:</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2819184-e9f6f30da0638117.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="屏幕快照 2017-02-06 下午2.20.08.png"></p>
+<p>由于格式太多，文章中只挑选一部分讲解：</p>
+<p>这里首先读取常量池的大小，初始化常量池：</p>
+<pre><code>//解析常量池
+int constant_pool_count = U2.read(inputStream);
+ConstantPool constantPool = new ConstantPool(constant_pool_count);
+constantPool.read(inputStream);
+</code></pre><p>接下来再逐个读取每项内容，并存储到数组cpInfo中，这里需要注意的是，cpInfo[]下标从1开始，0无效，且真正的常量池大小为constant_pool_count-1。</p>
+<pre><code>public class ConstantPool {
+    public int constant_pool_count;
+    public ConstantInfo[] cpInfo;
+
+    public ConstantPool(int count) {
+        constant_pool_count = count;
+        cpInfo = new ConstantInfo[constant_pool_count];
+    }
+
+    public void read(InputStream inputStream) {
+        for (int i = 1; i &lt; constant_pool_count; i++) {
+            short tag = U1.read(inputStream);
+            ConstantInfo constantInfo = ConstantInfo.getConstantInfo(tag);
+            constantInfo.read(inputStream);
+            cpInfo[i] = constantInfo;
+            if (tag == ConstantInfo.CONSTANT_Double || tag == ConstantInfo.CONSTANT_Long) {
+                i++;
+            }
+        }
+    }
+}
+</code></pre><p>我们先来看看CONSTANT_Utf8格式，这一项里面存放的是MUTF-8编码的字符串：</p>
+<pre><code>CONSTANT_Utf8_info { 
+    u1 tag;
+    u2 length;
+    u1 bytes[length]; 
+}
+</code></pre><p>那么如何读取这一项呢？</p>
+<pre><code>public class ConstantUtf8 extends ConstantInfo {
+    public String value;
+
+    @Override
+    public void read(InputStream inputStream) {
+        int length = U2.read(inputStream);
+        byte[] bytes = new byte[length];
+        try {
+            inputStream.read(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            value = readUtf8(bytes);
+        } catch (UTFDataFormatException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String readUtf8(byte[] bytearr) throws UTFDataFormatException {
+        //copy from java.io.DataInputStream.readUTF()
+    }
+}
+</code></pre><p>很简单，首先读取这一项的字节数组长度，接着调用readUtf8(),将字节数组转化为String字符串。</p>
+<p>再来看看CONSTANT_Class这一项，这一项存储的是类或者接口的符号引用：</p>
+<pre><code>CONSTANT_Class_info {
+    u1 tag;
+    u2 name_index;
+}
+</code></pre><p>注意这里的name_index并不是直接的字符串，而是指向常量池中cpInfo数组的name_index项，且cpInfo[name_index]一定是CONSTANT_Utf8格式。</p>
+<pre><code>public class ConstantClass extends ConstantInfo {
+    public int nameIndex;
+
+    @Override
+    public void read(InputStream inputStream) {
+        nameIndex = U2.read(inputStream);
+    }
+}
+</code></pre><p>常量池解析完毕后，就可以供后面的数据使用了，比方说ClassFile中的this_class指向的就是常量池中格式为CONSTANT_Class的某一项,那么我们就可以读取出类名：</p>
+<pre><code>int classIndex = U2.read(inputStream);
+ConstantClass clazz = (ConstantClass) constantPool.cpInfo[classIndex];
+ConstantUtf8 className = (ConstantUtf8) constantPool.cpInfo[clazz.nameIndex];
+classFile.className = className.value;
+System.out.print(&quot;classname:&quot; + classFile.className + &quot;\n&quot;);
+</code></pre><h3 id="字节码指令"><a href="#字节码指令" class="headerlink" title="字节码指令"></a>字节码指令</h3><p>解析常量池之后还需要接着解析一些类信息，如父类、接口类、字段等，但是相信大家最好奇的还是java指令的存储，大家都知道，我们平时写的java代码会被编译成java字节码，那么这些字节码到底存储在哪呢？别急，讲解指令之前，我们先来了解下ClassFile中的method_info，其格式如下：</p>
+<pre><code>method_info {
+    u2 access_flags;
+    u2 name_index;
+    u2 descriptor_index;
+    u2 attributes_count;
+    attribute_info attributes[attributes_count];
+}
+</code></pre><p>method_info里主要是一些方法信息：如访问标志、方法名索引、方法描述符索引及属性数组。这里要强调的是属性数组，因为字节码指令就存储在这个属性数组里。属性有很多种，比如说异常表就是一个属性，而存储字节码指令的属性为CODE属性，看这名字也知道是用来存储代码的了。属性的通用格式为：</p>
+<pre><code>attribute_info {
+    u2 attribute_name_index;
+    u4 attribute_length;
+    u1 info[attribute_length];
+}
+</code></pre><p>根据attribute_name_index可以从常量池中拿到属性名，再根据属性名就可以判断属性种类了。</p>
+<p>Code属性的具体格式为：</p>
+<pre><code>Code_attribute {
+    u2 attribute_name_index; u4 attribute_length;
+    u2 max_stack;
+    u2 max_locals;
+    u4 code_length;
+    u1 code[code_length];
+    u2 exception_table_length; 
+    {
+        u2 start_pc;
+        u2 end_pc;
+        u2 handler_pc;
+        u2 catch_type;
+    } exception_table[exception_table_length];
+    u2 attributes_count;
+    attribute_info attributes[attributes_count];
+}
+</code></pre><p>其中code数组里存储就是字节码指令，那么如何解析呢？每条指令在code[]中都是一个字节，我们平时javap命令反编译看到的指令其实是助记符，只是方便阅读字节码使用的，jvm有一张字节码与助记符的对照表，根据对照表，就可以将指令翻译为可读的助记符了。这里我也是在网上随便找了一个对照表，保存到本地txt文件中，并在使用时解析成HashMap。代码很简单，就不贴了，可以参考我代码中InstructionTable.java。</p>
+<p>接下来我们就可以解析字节码了：</p>
+<pre><code>for (int j = 0; j &lt; methodInfo.attributesCount; j++) {
+    if (methodInfo.attributes[j] instanceof CodeAttribute) {
+        CodeAttribute codeAttribute = (CodeAttribute) methodInfo.attributes[j];
+        for (int m = 0; m &lt; codeAttribute.codeLength; m++) {
+            short code = codeAttribute.code[m];
+            System.out.print(InstructionTable.getInstruction(code) + &quot;\n&quot;);
+        }
+    }
+}
+</code></pre><h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><p>整个项目终于写完了，接下来就来看看效果如何，随便找一个class文件解析运行：<br><img src="http://upload-images.jianshu.io/upload_images/2819184-ef31ee8c0256cf89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="屏幕快照 2017-02-06 下午3.55.10.png"></p>
+<p>哈哈，是不是很赞！</p>
+<p><strong>由于篇幅限制，本文中只选取了一部分解析过程讲解，感兴趣的同学可参考我的github项目：<a href="https://github.com/HalfStackDeveloper/ClassReader" target="_blank" rel="external">https://github.com/HalfStackDeveloper/ClassReader</a>，欢迎Fork And Star！</strong></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Class文件看起来很复杂，其实真正解析起来，也没有那么难，关键是要自己动手试试，才能彻底理解，希望各位看完后也能觉知此事要躬行！</p>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p><a href="https://book.douban.com/subject/25792515/" target="_blank" rel="external">1. 周志明《java虚拟机规范（JavaSE7）》</a></p>
+<p><a href="https://book.douban.com/subject/26802084/" target="_blank" rel="external">2. 张秀宏《自己动手写Java虚拟机》</a></p>
+<p><a href="https://book.douban.com/subject/26802084/" target="_blank" rel="external">3. 周志明《深入理解Java虚拟机（第2版）》</a></p>
+<p><strong>（如有错误，欢迎指正！）</strong></p>
+<p><strong>(转载请标明ID：半栈工程师，个人博客：<a href="https://halfstackdeveloper.github.io">https://halfstackdeveloper.github.io</a>)</strong></p>
+<p><strong>欢迎关注我的知乎专栏：<a href="https://zhuanlan.zhihu.com/halfstack" target="_blank" rel="external">https://zhuanlan.zhihu.com/halfstack</a></strong></p>
+<p><strong>欢迎Follow我的github: <a href="https://github.com/HalfStackDeveloper" target="_blank" rel="external">https://github.com/HalfStackDeveloper</a></strong></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag">#JVM</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/30/java内存管理初探/" rel="next" title="java内存管理初探">
+                <i class="fa fa-chevron-left"></i> java内存管理初探
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/02/02/Jvm之用java解析class文件/"
+           data-title="Jvm之用java解析class文件" data-url="https://halfstackdeveloper.github.io/2017/02/02/Jvm之用java解析class文件/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="http://od35ecbnl.bkt.clouddn.com/me.jpeg"
+               alt="XiandengWang" />
+          <p class="site-author-name" itemprop="name">XiandengWang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言："><span class="nav-number">1.</span> <span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Class文件"><span class="nav-number">2.</span> <span class="nav-text">Class文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是Class文件？"><span class="nav-number">2.1.</span> <span class="nav-text">什么是Class文件？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本结构"><span class="nav-number">2.2.</span> <span class="nav-text">基本结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解析"><span class="nav-number">3.</span> <span class="nav-text">解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字段类型"><span class="nav-number">3.1.</span> <span class="nav-text">字段类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常量池"><span class="nav-number">3.2.</span> <span class="nav-text">常量池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字节码指令"><span class="nav-number">3.3.</span> <span class="nav-text">字节码指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行"><span class="nav-number">4.</span> <span class="nav-text">运行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考："><span class="nav-number">6.</span> <span class="nav-text">参考：</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XiandengWang</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"halfstackdeveloper"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Umf9NNDeKyMJHSMtRxahHMKR-gzGzoHsz", "Xte46ItVMwCTsab96ISxrtlR");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+
+</body>
+</html>
